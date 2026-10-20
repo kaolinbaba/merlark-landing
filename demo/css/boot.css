@@ -1,0 +1,9 @@
+/* demo/css/boot.css — first paint before the app module loads, skip link, noscript. */
+.boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--text-muted); font-size: var(--fs-sm); }
+.boot svg { filter: drop-shadow(0 0 16px rgba(54,226,208,0.5)); }
+.boot-body { transform-origin: 32px 32px; animation: orbitBody 2.4s linear infinite; }
+@keyframes orbitBody { to { transform: rotate(360deg); } }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 300; padding: 8px 14px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.skip:focus { top: 12px; }
+.noscript { text-align: center; padding: 40px 16px; }
+@media (prefers-reduced-motion: reduce) { .boot-body { animation: none; } }

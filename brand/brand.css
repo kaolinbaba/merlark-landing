@@ -1,0 +1,39 @@
+/* brand/brand.css — brand board layout */
+.bb-head { display: flex; justify-content: space-between; align-items: center; max-width: 1120px; margin: 0 auto; padding: 20px 24px; }
+.back { color: var(--text-muted); text-decoration: none; font-size: var(--fs-sm); }
+.bb { max-width: 1120px; margin: 0 auto; padding: 0 24px 64px; display: flex; flex-direction: column; gap: 64px; }
+.bb h2 { font-size: var(--fs-2xl); margin-bottom: 20px; }
+.bb-hero { padding-top: 32px; display: flex; flex-direction: column; gap: 20px; }
+.bb-lockup svg { width: min(480px, 100%); height: auto; }
+.lead { font-size: var(--fs-lg); color: var(--text-muted); max-width: 44em; }
+.grid2, .grid3 { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.tile { margin: 0; background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.tile figcaption, .tile small { color: var(--text-dim); font-size: var(--fs-xs); }
+.sym-c { position: relative; color: var(--accent); display: grid; place-items: center; }
+.sym-c > svg { grid-area: 1 / 1; }
+.sym-c > svg:first-child circle { fill: var(--amber); }
+.sym-c > svg:first-child .wings { stroke: var(--text); }
+.guides * { fill: none; stroke: rgba(168,155,255,0.6); stroke-width: 0.3; stroke-dasharray: 1 1; }
+.row { display: flex; align-items: flex-end; gap: 20px; color: var(--text); flex-wrap: wrap; }
+.pad { padding: 16px 0; } .mono { color: var(--text); } .pad svg { max-width: 100%; height: auto; }
+.tile.light { background: #eef2f8; } .tile.light .pad { color: #0a1020; } .tile.light figcaption { color: #3a4560; }
+.rules { margin: 16px 0 0; padding-left: 1.1em; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px; }
+.swatches { list-style: none; padding: 0; margin: 0 0 16px; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.swatches li { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-xs); color: var(--text-dim); }
+.swatches i { height: 64px; border-radius: 12px; border: 1px solid var(--line-strong); }
+.swatches b { color: var(--text); font-size: var(--fs-sm); } .swatches code { font-family: var(--font-mono); }
+.k { font-size: 1.2em; }
+.type span { color: var(--text); } .t-disp { font: 700 34px var(--font-display); } .t-body { font-size: var(--fs-lg); } .t-mono { font: 500 18px var(--font-mono); color: var(--amber) !important; }
+.spacing { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 12px; } .spacing span { background: var(--accent-soft); border: 1px solid rgba(54,226,208,0.5); border-radius: 3px; }
+.motion { align-items: center; text-align: center; }
+.m-orbit { width: 110px; height: 110px; border-radius: 50%; border: 1px solid rgba(54,226,208,0.4); position: relative; animation: spin 14s linear infinite; }
+.m-orbit i { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--amber); top: -5px; left: 50px; box-shadow: 0 0 10px var(--amber); }
+.m-dock { width: 120px; height: 80px; border-radius: 12px; border: 1px solid rgba(54,226,208,0.5); background: var(--surface-3); animation: dockLoop 2.6s var(--ease-out) infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes dockLoop { 0% { opacity: 0; transform: translateY(14px) scale(0.98); filter: blur(4px); } 30%, 80% { opacity: 1; transform: none; filter: none; } 100% { opacity: 0; } }
+.explore { width: 100%; height: auto; border-radius: var(--r-lg); border: 1px solid var(--line); }
+.files { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; font-family: var(--font-mono); font-size: var(--fs-sm); }
+.bb-foot { text-align: center; color: var(--text-dim); font-size: var(--fs-xs); padding: 24px; border-top: 1px solid var(--line); }
+@media (max-width: 760px) { .grid2, .grid3, .files { grid-template-columns: minmax(0,1fr); } .swatches { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (prefers-reduced-motion: reduce) { .m-orbit, .m-dock { animation: none; } }

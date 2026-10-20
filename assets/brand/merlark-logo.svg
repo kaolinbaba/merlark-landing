@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" width="240" height="56" role="img" aria-label="Merlark">
+  <!-- Primary lockup. One-colour master: everything is currentColor. -->
+  <g transform="scale(0.875)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M54.07 20.26A25 25 0 1 1 39.73 8.22" stroke="currentColor" stroke-width="4.5"/>
+    <path d="M13.5 40C16.5 32.5 19.8 25 23.5 24.5C27.2 24 29.6 29.5 32 34.5C34.4 29.5 36.8 24 40.5 24.5C44.2 25 47.5 32.5 50.5 40" stroke="currentColor" stroke-width="5"/>
+    <circle cx="48.07" cy="12.85" r="4.2" fill="currentColor"/>
+  </g>
+  <path transform="translate(70 6)" d="M2 40V16M2 22A6 6 0 0 1 14 22V40M14 22A6 6 0 0 1 26 22V40 M35 28H59A12 12 0 1 0 55.5 36.5 M68 40V16M68 27A11 11 0 0 1 79 16 M88 4V40 M121 16V40M121 28A12 12 0 1 0 97 28A12 12 0 1 0 121 28 M130 40V16M130 27A11 11 0 0 1 141 16 M150 4V40M164 16L150 30M155.5 25L165 40" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

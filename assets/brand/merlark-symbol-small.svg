@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Merlark">
+  <!-- Optical size for 12-24px: heavier strokes, larger body. -->
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M54.07 20.26A25 25 0 1 1 39.73 8.22" stroke-width="6.5"/>
+    <path d="M13.5 40C16.5 32.5 19.8 25 23.5 24.5C27.2 24 29.6 29.5 32 34.5C34.4 29.5 36.8 24 40.5 24.5C44.2 25 47.5 32.5 50.5 40" stroke-width="7.5"/>
+  </g>
+  <circle cx="48.07" cy="12.85" r="5.6" fill="currentColor"/>
+</svg>

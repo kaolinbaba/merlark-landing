@@ -1,201 +1,179 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background:#070b16">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#070b16">
 <title>Merlark</title>
-<meta name="description" content="Merlark watches a YouTube channel's content patterns and shows what changed, with the videos and timestamps behind each observation. In development, private beta.">
+<meta name="description" content="Merlark watches a YouTube channel's content patterns and shows what changed, with the videos and timestamps behind each observation. In development, private beta. Explore the interactive demo with sample data.">
 <meta name="robots" content="index,follow">
-<style>
-:root {
-  --bg: #f7f6f2;
-  --surface: #ffffff;
-  --ink: #1b1d21;
-  --muted: #5c6068;
-  --line: #e2e0d8;
-  --accent: #2f5d50;
-  --accent-soft: #e4eee9;
-  --amber: #8a5a12;
-  --amber-soft: #f6ecd9;
-  --slate-soft: #eceef2;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121416;
-    --surface: #1a1d20;
-    --ink: #eceae4;
-    --muted: #a3a7ad;
-    --line: #2b2f33;
-    --accent: #8cc4b1;
-    --accent-soft: #1f2e29;
-    --amber: #e3b56a;
-    --amber-soft: #2d2518;
-    --slate-soft: #23272c;
-  }
-}
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-a { color: var(--accent); }
-.wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
-header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 0; }
-.brand { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
-.badge {
-  display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
-  color: var(--amber); background: var(--amber-soft); border-radius: 999px; padding: 4px 12px;
-}
-.hero { padding: 48px 0 56px; }
-.hero h1 { font-size: clamp(32px, 6vw, 52px); line-height: 1.12; letter-spacing: -0.02em; margin: 18px 0 20px; max-width: 16em; }
-.hero p.lead { font-size: 19px; color: var(--muted); max-width: 36em; margin: 0 0 28px; }
-.button {
-  display: inline-block; background: var(--ink); color: var(--bg); text-decoration: none;
-  font-weight: 600; padding: 12px 20px; border-radius: 8px;
-}
-.note { font-size: 14px; color: var(--muted); margin-top: 14px; }
-section { padding: 44px 0; border-top: 1px solid var(--line); }
-section h2 { font-size: 26px; letter-spacing: -0.01em; margin: 0 0 8px; }
-section p.intro { color: var(--muted); margin: 0 0 28px; max-width: 40em; }
-.grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
-.card h3 { font-size: 17px; margin: 0 0 8px; }
-.card p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.example {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; margin-top: 20px;
-}
-.example .label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.example blockquote { margin: 10px 0 0; padding-left: 14px; border-left: 3px solid var(--accent); }
-.example blockquote p { margin: 0 0 6px; }
-.example .cite { font-size: 14.5px; color: var(--muted); }
-.status { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
-.col { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
-.tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 6px; padding: 3px 8px; margin-bottom: 12px; }
-.tag.now { color: var(--accent); background: var(--accent-soft); }
-.tag.dev { color: var(--amber); background: var(--amber-soft); }
-.tag.later { color: var(--muted); background: var(--slate-soft); }
-.col ul { margin: 0; padding-left: 18px; }
-.col li { margin: 0 0 8px; font-size: 15.5px; }
-.principles { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
-.principles li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; font-size: 15.5px; }
-.principles strong { display: block; margin-bottom: 2px; }
-footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
-footer p { margin: 0 0 6px; }
-@media (max-width: 820px) {
-  .grid, .status { grid-template-columns: 1fr; }
-  .principles { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-  .wrap { padding: 0 16px; }
-  body { font-size: 16px; }
-  .hero { padding: 28px 0 40px; }
-  .hero p.lead { font-size: 17px; }
-}
-</style>
+<link rel="canonical" href="https://merlark.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Merlark — YouTube reviews your whole channel. Merlark keeps watch.">
+<meta property="og:description" content="Channel monitoring with evidence for YouTube creators. Explore the interactive demo with sample data.">
+<meta property="og:image" content="https://merlark.com/assets/brand/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://merlark.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/space.css">
+<link rel="stylesheet" href="demo/css/components.css">
+<link rel="stylesheet" href="demo/css/views.css">
+<link rel="stylesheet" href="assets/css/landing.css">
 </head>
 <body>
-<div class="wrap">
-  <header class="top">
-    <a class="brand" href="./">Merlark</a>
-    <span class="badge">In development · Private beta</span>
-  </header>
+<div class="starfield" aria-hidden="true"></div>
+<a class="skip" href="#main">Skip to content</a>
 
-  <main>
-    <div class="hero">
-      <h1>YouTube reviews your whole channel. Merlark keeps watch.</h1>
-      <p class="lead">Merlark is a monitoring and evidence tool for YouTube creators. It watches the content patterns
-        across your channel and shows what changed, which videos produced each observation, and where to look,
-        with the videos and timestamps behind every line.</p>
-      <a class="button" href="mailto:onur@merlark.com?subject=Merlark%20private%20beta">Contact the founder</a>
-      <p class="note">Merlark is not open to the public yet. There is no signup on this page.</p>
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="logo" href="./" aria-label="Merlark home" data-logo="lockup"></a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#journey">How it works</a>
+      <a href="#product">Product</a>
+      <a href="#status">Status</a>
+    </nav>
+    <a class="btn btn-primary btn-sm demo-cta" href="demo/">Explore interactive demo</a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="hero-mark" aria-hidden="true">
+          <div class="orbit-lines"><i style="width:220px;height:220px;--r:220px"></i><i style="width:330px;height:330px;--r:330px"></i></div>
+          <span data-logo="symbol"></span>
+        </div>
+        <p class="eyebrow">Channel monitoring for YouTube creators · Private beta</p>
+        <h1>YouTube reviews your whole channel. <span class="glow">Merlark keeps watch.</span></h1>
+        <p class="lead">Merlark watches the content patterns across your channel and shows what changed, which videos produced each observation, and the timestamps behind it, so your next creative decision starts from evidence.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore interactive demo</a>
+          <a class="btn btn-ghost btn-lg" href="#journey">How it works</a>
+        </div>
+        <p class="note">The demo uses sample data from a fictional channel. No account, no sign-in.</p>
+      </div>
+      <div class="hero-preview" id="hero-preview" aria-label="Interactive product preview with sample data">
+        <noscript><p class="muted">The interactive preview needs JavaScript. <a href="demo/">Open the demo</a>.</p></noscript>
+      </div>
     </div>
+  </section>
 
-    <section aria-labelledby="what">
-      <h2 id="what">What Merlark does</h2>
-      <p class="intro">Merlark observes and reports. It does not predict, score or judge a channel, and it never
-        says anything about a channel's monetization status.</p>
-      <div class="grid">
-        <div class="card">
-          <h3>Channel monitoring</h3>
-          <p>Connect a channel with Google sign-in and read-only access. Merlark keeps track of how formats,
-            structure and upload patterns shift across the catalogue over time.</p>
-        </div>
-        <div class="card">
-          <h3>Evidence for every observation</h3>
-          <p>Each observation cites the specific videos and timestamps that produced it. If the evidence cannot
-            be shown, the observation is not shown either.</p>
-        </div>
-        <div class="card">
-          <h3>Creator reports</h3>
-          <p>A recurring brief compares recent videos with the channel's own history, keeps what was measured
-            separate from what it might mean, and says so plainly when evidence is insufficient.</p>
-        </div>
-      </div>
-      <div class="example">
-        <div class="label">Illustrative example, not real channel data</div>
-        <blockquote>
-          <p>Five of your last eight uploads share the same opening structure.</p>
-          <p class="cite">Evidence: the specific videos and the timestamp in each where the pattern appears.</p>
-        </blockquote>
-      </div>
-    </section>
+  <section class="journey" id="journey" aria-labelledby="journey-title">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 id="journey-title">From connection to outcome, in five steps</h2>
+      <ol class="journey-steps">
+        <li><span class="jn num">01</span><h3>Connect a channel</h3><p>Google sign-in with read-only access. Further permissions only when a feature needs them.</p></li>
+        <li><span class="jn num">02</span><h3>Inspect findings</h3><p>Patterns compared with your channel’s own history, marked working, slipping, neutral, emerging or insufficient evidence.</p></li>
+        <li><span class="jn num">03</span><h3>Explore the evidence</h3><p>Every finding opens the specific videos and timestamps behind it. No evidence, no finding.</p></li>
+        <li><span class="jn num">04</span><h3>Choose an intervention</h3><p>Decide what to try next, or draft a script grounded in your own findings.</p></li>
+        <li><span class="jn num">05</span><h3>Track outcomes</h3><p>Later readings and your own notes are recorded separately, so Merlark never grades its advice with its own signal.</p></li>
+      </ol>
+    </div>
+  </section>
 
-    <section aria-labelledby="status">
-      <h2 id="status">Where it stands today</h2>
-      <p class="intro">Merlark is built by a solo founder and is being tested privately. This is an honest split of
-        what exists and what does not.</p>
-      <div class="status">
-        <div class="col">
-          <span class="tag now">Built, in private testing</span>
-          <ul>
-            <li>Google sign-in with a read-only YouTube connection</li>
-            <li>Reading channel and video data through the official YouTube APIs</li>
-            <li>Automatic deletion of stored YouTube statistics within 30 days</li>
-            <li>Disconnecting a channel deletes its stored data</li>
-          </ul>
-        </div>
-        <div class="col">
-          <span class="tag dev">In development</span>
-          <ul>
-            <li>Evidence-backed findings with video and timestamp citations</li>
-            <li>A visible line between reconstructed history and what Merlark has observed since connection</li>
-            <li>The recurring creator brief</li>
-            <li>Self-service account deletion</li>
-          </ul>
-        </div>
-        <div class="col">
-          <span class="tag later">Planned</span>
-          <ul>
-            <li>Script suggestions grounded only in a creator's own stored findings</li>
-            <li>Using the Claude API to write reports from stored evidence</li>
-            <li>Paid Early Access plan with one-click cancellation</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+  <section class="product" id="product" aria-labelledby="product-title">
+    <div class="wrap">
+      <p class="eyebrow">The product</p>
+      <h2 id="product-title">Built from the same screens as the demo</h2>
 
-    <section aria-labelledby="principles">
-      <h2 id="principles">How it is built</h2>
+      <div class="feature">
+        <div class="feature-copy">
+          <h3>Reconstructed history, clearly separated</h3>
+          <p>When a channel connects, Merlark rebuilds its past from what is still accessible and draws a visible line at the moment of connection. Left of the line is a historical estimate; right of it is what Merlark observed.</p>
+          <a class="text-link demo-cta" href="demo/#/monitoring">See monitoring and backfill</a>
+        </div>
+        <div class="card feature-visual" id="boundary-visual"></div>
+      </div>
+
+      <div class="feature flip">
+        <div class="feature-copy">
+          <h3>Observation first, interpretation second</h3>
+          <p>What was measured and what it might mean are always shown apart. A finding describes an association with your own baseline, never a cause, and says plainly when evidence is insufficient.</p>
+          <a class="text-link demo-cta" href="demo/#/findings">Open the findings</a>
+        </div>
+        <div class="card feature-visual" id="evidence-visual"></div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-copy">
+          <h3>A script draft that cites its sources</h3>
+          <p>Pick findings, inspect their sources, reorder the outline and export it. Evidence-backed lines keep their citation; structure and weak ideas are labelled as such.</p>
+          <a class="text-link demo-cta" href="demo/#/script">Try the script workspace</a>
+        </div>
+        <div class="card feature-visual" id="script-visual"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="principles-sec" aria-labelledby="principles-title">
+    <div class="wrap">
+      <p class="eyebrow">How it is built</p>
+      <h2 id="principles-title">Principles</h2>
       <ul class="principles">
-        <li><strong>Official APIs only</strong>No scraping and no unofficial data sources.</li>
-        <li><strong>Least privilege</strong>Read-only access, and additional permissions only when a feature
-          that needs them is turned on.</li>
-        <li><strong>Observation, not prediction</strong>No risk scores, no probabilities, no verdicts.</li>
-        <li><strong>Built with Claude</strong>Merlark is developed with Claude Code. Using the Claude API inside the
-          product is planned and not yet built.</li>
+        <li><strong>Official APIs only</strong><span>No scraping and no unofficial data sources.</span></li>
+        <li><strong>Least privilege</strong><span>Read-only access, and additional permissions only when a feature that needs them is turned on.</span></li>
+        <li><strong>Observation, not prediction</strong><span>No risk scores, no probabilities, no verdicts. Merlark never says anything about a channel’s monetization status.</span></li>
+        <li><strong>Built with Claude</strong><span>Merlark is developed with Claude Code. Using the Claude API inside the product is planned and not yet built.</span></li>
       </ul>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer>
-    <p>Contact: <a href="mailto:onur@merlark.com">onur@merlark.com</a></p>
+  <section class="status" id="status" aria-labelledby="status-title">
+    <div class="wrap">
+      <p class="eyebrow">Where it stands today</p>
+      <h2 id="status-title">An honest split of what exists</h2>
+      <p class="intro">Merlark is built by a solo founder and is being tested privately. The demo shows the full design with sample data; this is what is real.</p>
+      <div class="status-grid">
+        <div class="card"><h3><i class="dot built"></i>Built, in private testing</h3><ul>
+          <li>Google sign-in with a read-only YouTube connection</li>
+          <li>Reading channel and video data through the official YouTube APIs</li>
+          <li>Automatic deletion of stored YouTube statistics within 30 days</li>
+          <li>Disconnecting a channel deletes its stored data</li></ul></div>
+        <div class="card"><h3><i class="dot dev"></i>In development</h3><ul>
+          <li>Evidence-backed findings with video and timestamp citations</li>
+          <li>A visible line between reconstructed history and what Merlark has observed since connection</li>
+          <li>The weekly creator brief</li>
+          <li>Self-service account deletion</li></ul></div>
+        <div class="card"><h3><i class="dot planned"></i>Planned</h3><ul>
+          <li>Script suggestions grounded only in a creator’s own stored findings</li>
+          <li>Using the Claude API to write reports from stored evidence</li>
+          <li>Paid Early Access plan with one-click cancellation</li></ul></div>
+      </div>
+      <p class="fine dim">Long-horizon baselines, finding states and comparisons are derived metrics that YouTube’s developer policies allow only after an API audit. Merlark has not received that approval; today it keeps YouTube statistics for no more than 30 days.</p>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="wrap final-inner">
+      <span data-logo="symbol-lg" aria-hidden="true"></span>
+      <h2>Step onto the bridge</h2>
+      <p class="muted">Explore every screen with a fictional channel’s sample data. Nothing you do there leaves your browser.</p>
+      <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore interactive demo</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span data-logo="lockup-small"></span>
+    <p>Contact: <a href="mailto:onur@merlark.com">onur@merlark.com</a> · <a href="brand/">Brand</a></p>
     <p>Merlark is an independent project by Onur Atılkan and is not affiliated with or endorsed by YouTube or Google.</p>
-    <p>This page sets no cookies, loads no third-party resources and collects no data.</p>
+    <p>This site sets no cookies, loads no third-party resources and collects no data. The demo remembers your clicks in your own browser only.</p>
     <p>© 2026 Merlark</p>
-  </footer>
-</div>
+  </div>
+</footer>
+
+<div class="dock-overlay" aria-hidden="true"><span data-logo="symbol-lg"></span></div>
+<script type="module" src="assets/js/landing.js"></script>
 </body>
 </html>
