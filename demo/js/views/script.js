@@ -5,75 +5,22 @@
 
 import { h, icon } from '../ui/dom.js';
 import { drawer, toast } from '../ui/overlay.js';
-import { stateChip, qualityBadge, evidenceRow, previewChip } from '../ui/components.js';
-import { allFindingStats, getRange, evidenceFor, patternWatchStats, formatTime } from '../data/derive.js';
-import { findings, patternWatch, scriptTopics, scriptBlocks, scaffoldBlocks } from '../data/fixtures.js';
+import { stateChip, qualityBadge, evidenceRow, previewChip, insufficientPanel } from '../ui/components.js';
+import { evidenceFor, formatDate } from '../data/derive.js';
+import { findings, patternWatch, scriptTopics } from '../data/fixtures.js';
+import { scriptModel } from '../data/script-model.js';
 import { setState } from '../state.js';
+import { captureRects, playFlip } from '../ui/motion.js';
 import { openEvidence } from './evidence.js';
 
-const SOURCE_BLOCK = { F1: 'map', F2: 'archive', F3: 'series', F4: 'recap', F5: 'shorts', P1: 'variety' };
-const CANON = ['map', 'archive', 'variety', 's1', 's2', 'recap', 's3', 's4', 'series', 'shorts'];
 const RULES = [
   'Openings come first: route map, then any archival beat, then the episode-specific line.',
   'The recap sits between chapters 2 and 3, near the midpoint.',
   'Structure blocks are always included and are marked as not evidence-backed.',
   'Packaging notes go after the close.',
-  'Findings with insufficient evidence can be added, but only as labelled ungrounded suggestions.',
+  'Findings with insufficient evidence in the selected period become labelled ungrounded suggestions.',
 ];
-
-function grounding(src, statsById) {
-  if (src === 'P1') return { kind: 'grounded', label: 'From Pattern watch evidence' };
-  const s = statsById[src];
-  if (s.state === 'insufficient') return { kind: 'ungrounded', label: 'Ungrounded suggestion · insufficient evidence' };
-  if (s.state === 'emerging') return { kind: 'grounded', label: 'Evidence-backed · emerging, limited evidence' };
-  if (s.state === 'neutral') return { kind: 'grounded', label: 'Evidence-backed · no difference found' };
-  return { kind: 'grounded', label: `Evidence-backed · ${s.state}` };
-}
-
-export function assemble(script, statsById) {
-  const topic = scriptTopics.find((t) => t.id === script.topic) || scriptTopics[0];
-  const present = [];
-  for (const id of CANON) {
-    if (script.removed.includes(id)) continue;
-    const scaffold = scaffoldBlocks.find((b) => b.id === id);
-    if (scaffold) { present.push({ id, ...scaffold, text: scaffold.text(topic), source: null, ground: { kind: 'structure', label: 'Structure · not evidence-backed' } }); continue; }
-    const src = Object.keys(SOURCE_BLOCK).find((k) => SOURCE_BLOCK[k] === id);
-    if (!script.selected.includes(src)) continue;
-    const b = scriptBlocks[id];
-    present.push({ id, section: b.section, label: b.label, text: b.text(topic), source: src, ground: grounding(src, statsById) });
-  }
-  if (!script.order) return { topic, blocks: present };
-  const ordered = script.order.map((id) => present.find((b) => b.id === id)).filter(Boolean);
-  for (const b of present) {
-    if (ordered.includes(b)) continue;
-    const ci = CANON.indexOf(b.id);
-    const at = ordered.findIndex((x) => CANON.indexOf(x.id) > ci);
-    ordered.splice(at < 0 ? ordered.length : at, 0, b);
-  }
-  return { topic, blocks: ordered };
-}
-
-export function draftText({ topic, blocks }, statsById) {
-  const lines = [`# ${topic.title}`, '', 'Script outline assembled in the Merlark interactive demo from sample findings. No AI model was called.', ''];
-  let section = null;
-  blocks.forEach((b) => {
-    if (b.section !== section) { section = b.section; lines.push(`## ${section}`); }
-    const tag = b.source ? ` [${b.source}]` : '';
-    const flag = b.ground.kind === 'ungrounded' ? ' (ungrounded suggestion)' : b.ground.kind === 'structure' ? ' (structure)' : '';
-    lines.push(`- ${b.text}${tag}${flag}`);
-  });
-  const used = [...new Set(blocks.map((b) => b.source).filter(Boolean))];
-  if (used.length) {
-    lines.push('', '## Sources');
-    used.forEach((src) => {
-      if (src === 'P1') { lines.push(`[P1] ${patternWatch.name}: ${patternWatchStats(getRange('all')).n} uploads share one template (Pattern watch, no score).`); return; }
-      const s = statsById[src];
-      const ev = evidenceFor(s).slice(-3).map((e) => `${e.video.title} ${formatTime(e.segment.start)}–${formatTime(e.segment.end)}`).join('; ');
-      lines.push(`[${src}] ${s.finding.name}: ${s.state}, evidence ${s.quality.toLowerCase()}, ${s.groupAll.length} videos. ${ev ? 'Examples: ' + ev + '.' : ''}`);
-    });
-  }
-  return lines.join('\n');
-}
+const BLOCK_SEL = '.blocks li[data-key]';
 
 function copyText(text) {
   const fallback = () => {
@@ -91,34 +38,36 @@ function download(text, name) {
   toast(`Exported ${name}.`);
 }
 
-function inspect(src, statsById) {
+function inspect(src, model) {
+  const { statsById, pw, range } = model;
+  const period = h('p', { class: 'fine dim' }, `Period: ${range.label}, ${formatDate(range.start)} – ${formatDate(range.end)}`);
   if (src === 'P1') {
-    const pw = patternWatchStats(getRange('all'));
-    drawer({ label: 'Source · Pattern watch', title: patternWatch.name, body: h('div', { class: 'ev-list' },
-      h('p', { class: 'muted' }, patternWatch.observation(pw.n)),
+    drawer({ label: 'Source · Pattern watch', title: patternWatch.name, body: h('div', { class: 'ev-list' }, period,
+      h('p', { class: 'muted' }, pw.n ? patternWatch.observation(pw.n) : 'No uploads in this period share the series template.'),
       pw.videos.map((v) => { const seg = patternWatch.segments(v)[0]; return evidenceRow({ video: v, segment: seg }, () => openEvidence({ video: v, segment: seg, findingId: 'P1', findingName: patternWatch.name })); })) });
     return;
   }
   const s = statsById[src];
-  drawer({ label: `Source · ${src}`, title: s.finding.name, body: h('div', { class: 'ev-list' },
+  drawer({ label: `Source · ${src}`, title: s.finding.name, body: h('div', { class: 'ev-list' }, period,
     h('div', { class: 'chips' }, stateChip(s.state), qualityBadge(s.quality)),
-    h('p', { class: 'muted' }, s.finding.observation(s)),
+    s.state === 'insufficient' ? insufficientPanel(s) : h('p', { class: 'muted' }, s.finding.observation(s)),
     evidenceFor(s).slice().reverse().map((e) => evidenceRow(e, () => openEvidence({ ...e, findingId: src, findingName: s.finding.name })))) });
 }
 
 export function render(_r, ctx) {
   const sc = ctx.state.script;
-  const stats = allFindingStats(getRange('all'));
-  const statsById = Object.fromEntries(stats.map((s) => [s.finding.id, s]));
-  const draft = assemble(sc, statsById);
-  const text = draftText(draft, statsById);
-  const set = (patch) => setState({ script: { ...sc, ...patch } });
+  const model = scriptModel(sc, ctx.range);
+  const { statsById, draft, text, range } = model;
+  // Re-renders replace the DOM; FLIP keeps reordered blocks visibly sliding into place.
+  const set = (patch) => { const before = captureRects(BLOCK_SEL); setState({ script: { ...sc, ...patch } }); playFlip(before, BLOCK_SEL); };
   const move = (i, d) => {
     const ids = draft.blocks.map((b) => b.id); const j = i + d;
     if (j < 0 || j >= ids.length) return;
     [ids[i], ids[j]] = [ids[j], ids[i]]; set({ order: ids });
+    requestAnimationFrame(() => { const el = document.querySelector(`${BLOCK_SEL.replace('[data-key]', `[data-key="${ids[j]}"]`)} .block-ctl button:not([disabled])`); el && el.focus({ preventScroll: true }); });
   };
   let dragFrom = null;
+  const weakened = draft.blocks.filter((b) => b.source && b.ground.kind === 'ungrounded');
 
   const sources = [...findings.map((f) => ({ id: f.id, name: f.name, s: statsById[f.id] })), { id: 'P1', name: patternWatch.name, s: null }];
   return h('div', { class: 'view script' },
@@ -127,6 +76,9 @@ export function render(_r, ctx) {
       h('div', { class: 'chips' }, previewChip(), h('label', { class: 'range' }, h('span', { class: 'sr-only' }, 'Episode topic'),
         h('select', { onchange: (e) => set({ topic: e.target.value }) }, scriptTopics.map((t) => h('option', { value: t.id, selected: t.id === sc.topic }, t.title)))))),
     h('p', { class: 'muted lede' }, 'Pick the findings to build from. Each evidence-backed line keeps a link to the videos and timestamps behind it. The demo assembles prepared text; no AI model is called.'),
+    h('p', { class: `period-note ${weakened.length ? 'warn' : ''}`, role: 'status' },
+      icon('info', 14), h('span', null, `Evidence period: ${range.label} (${formatDate(range.start)} – ${formatDate(range.end)}). Labels, sources and the export follow the date range in the top bar.`,
+        weakened.length ? ` In this period ${weakened.map((b) => b.source).join(', ')} ${weakened.length === 1 ? 'has' : 'have'} too little evidence, so ${weakened.length === 1 ? 'its line is' : 'their lines are'} marked as ungrounded suggestions.` : '')),
     h('div', { class: 'script-grid' },
       h('section', { class: 'card sources', 'aria-label': 'Findings to build from' },
         h('h2', { class: 'sub' }, '1 · Findings'),
@@ -134,8 +86,8 @@ export function render(_r, ctx) {
           const on = sc.selected.includes(src.id);
           return h('div', { class: `src ${on ? 'on' : ''}` },
             h('label', null, h('input', { type: 'checkbox', checked: on, onchange: () => set({ selected: on ? sc.selected.filter((x) => x !== src.id) : [...sc.selected, src.id] }) }),
-              h('span', null, h('strong', null, src.name), src.s ? stateChip(src.s.state) : h('span', { class: 'chip' }, 'Pattern watch'))),
-            h('button', { class: 'btn btn-quiet btn-sm', onclick: () => inspect(src.id, statsById) }, icon('eye', 14), 'Inspect sources'));
+              h('span', null, h('strong', null, src.name), src.s ? stateChip(src.s.state) : h('span', { class: 'chip' }, model.pw.n ? `Pattern watch · ${model.pw.n} uploads` : 'Pattern watch · none in period'))),
+            h('button', { class: 'btn btn-quiet btn-sm', onclick: () => inspect(src.id, model) }, icon('eye', 14), 'Inspect sources'));
         }),
         h('details', { class: 'rules-box' }, h('summary', null, 'Assembly rules'), h('ol', null, RULES.map((r) => h('li', null, r))))),
       h('section', { class: 'card draft', 'aria-label': 'Draft blocks' },
@@ -144,11 +96,11 @@ export function render(_r, ctx) {
             sc.order ? h('button', { class: 'btn btn-quiet btn-sm', onclick: () => set({ order: null }) }, 'Reset order') : null,
             sc.removed.length ? h('button', { class: 'btn btn-quiet btn-sm', onclick: () => set({ removed: [] }) }, `Restore removed (${sc.removed.length})`) : null)),
         h('ol', { class: 'blocks' }, draft.blocks.map((b, i) => {
-          const li = h('li', { class: `block g-${b.ground.kind}`, draggable: 'true' },
+          const li = h('li', { class: `block g-${b.ground.kind}`, draggable: 'true', 'data-key': b.id },
             h('span', { class: 'drag', 'aria-hidden': 'true' }, icon('drag', 16)),
             h('div', { class: 'block-main' },
               h('div', { class: 'block-meta' }, h('span', { class: 'sec' }, b.section), h('span', { class: `gl ${b.ground.kind}` }, b.ground.label),
-                b.source ? h('button', { class: 'cite', onclick: () => inspect(b.source, statsById) }, b.source) : null),
+                b.source ? h('button', { class: 'cite', onclick: () => inspect(b.source, model) }, b.source) : null),
               h('strong', null, b.label), h('p', null, b.text)),
             h('div', { class: 'block-ctl' },
               h('button', { class: 'btn btn-quiet icon-btn', 'aria-label': `Move ${b.label} up`, disabled: i === 0, onclick: () => move(i, -1) }, icon('up', 16)),

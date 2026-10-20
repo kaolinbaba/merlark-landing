@@ -1,7 +1,18 @@
 // demo/js/ui/charts.js
 // Hand-built SVG charts sized to their container, so labels stay legible on phones.
 
-import { h } from './dom.js';
+import { h, reducedMotion } from './dom.js';
+
+// Last drawn positions per chart key, so a re-render (e.g. a date-range change) animates from old to new values.
+const memo = new Map();
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+function slideFrom(el, key, x, y) {
+  const prev = memo.get(key);
+  memo.set(key, { x, y });
+  if (!prev || reducedMotion() || (Math.abs(prev.x - x) < 0.5 && Math.abs(prev.y - y) < 0.5)) return false;
+  el.animate([{ transform: `translate(${prev.x - x}px, ${prev.y - y}px)` }, { transform: 'none' }], { duration: 520, easing: EASE });
+  return true;
+}
 import { toMs, formatShort, formatInt, formatTime, provenanceOf, formatDate } from '../data/derive.js';
 import { CONNECTED_AT } from '../data/fixtures.js';
 
@@ -23,7 +34,7 @@ function tooltipLayer(wrap) {
 }
 
 // Upload timeline: one dot per long-form upload (7-day views), split at the connection boundary.
-export function timelineChart({ videos, range, highlight, baseline, width, height = 240, onSelect, selectedId }) {
+export function timelineChart({ videos, range, highlight, baseline, width, height = 240, onSelect, selectedId, key = 'timeline' }) {
   const W = Math.max(300, width); const H = height;
   const m = { l: 46, r: 14, t: 34, b: 30 };
   const iw = W - m.l - m.r; const ih = H - m.t - m.b;
@@ -63,7 +74,9 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
   });
   if (baseline) {
     const yy = y(baseline);
-    svg.append(h('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: 'baseline-line' }),
+    const bl = h('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: 'baseline-line' });
+    slideFrom(bl, `${key}:baseline`, 0, yy);
+    svg.append(bl,
       h('text', { x: m.l + 6, y: yy + 14, class: 'axis baseline-label' }, `baseline ${formatInt(baseline)}`));
   }
   const tip = tooltipLayer(wrap);
@@ -79,6 +92,8 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
     },
     h('line', { x1: cx, x2: cx, y1: y(0), y2: cy, class: 'stem' }),
     h('circle', { cx, cy, r: hi ? 6 : 4.5 }));
+    g.dataset.id = v.id;
+    if (slideFrom(g, `${key}:${v.id}`, cx, cy)) g.classList.add('moved');
     const show = () => tip.show(cx, cy - 14, [v.title, `${formatShort(v.date)} · ${formatInt(v.views7)} views in 7 days`, prov === 'historical' ? 'Historical estimate' : 'Observed by Merlark']);
     g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
     g.addEventListener('pointerleave', tip.hide); g.addEventListener('blur', tip.hide);
@@ -93,7 +108,9 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
 }
 
 // Horizontal bars: rows = [{ label, value, display, tone, note }]
-export function barChart({ rows, max, width }) {
+// rows = [{ id?, label, value, display, tone, note }]. Pass a chart `key` (unique per chart) to animate value changes;
+// rows are matched by `id` (or label), never by position.
+export function barChart({ rows, max, width, key = null }) {
   const W = Math.max(260, width); const rowH = 46; const labelW = Math.min(170, W * 0.38);
   const H = rows.length * rowH + 6;
   const maxChars = Math.max(8, Math.floor((labelW - 10) / 7));
@@ -105,11 +122,20 @@ export function barChart({ rows, max, width }) {
       h('text', { x: 0, y: yy + 15, class: 'bar-label' }, h('title', null, r.label), r.label.length > maxChars ? r.label.slice(0, maxChars - 1).trimEnd() + '…' : r.label),
       r.note ? h('text', { x: 0, y: yy + 31, class: 'bar-note' }, r.note) : null,
       h('rect', { x: labelW, y: yy + 4, width: W - labelW - 70, height: 16, rx: 8, class: 'bar-track' }),
-      h('rect', { x: labelW, y: yy + 4, width: bw, height: 16, rx: 8, class: `bar ${r.tone || ''}`, style: { '--i': i } }),
+      barRect(key ? `${key}:${r.id ?? r.label}` : null, labelW, yy + 4, bw, r.tone, i),
       h('text', { x: labelW + bw + 8, y: yy + 17, class: 'bar-value num' }, r.display),
     );
   });
   return svg;
+}
+
+function barRect(k, x, y, w, tone, i) {
+  const prev = k ? memo.get(k) : null;
+  if (k) memo.set(k, { w });
+  const rect = h('rect', { x, y, width: w, height: 16, rx: 8, class: `bar ${tone || ''} ${prev ? 'moved' : ''}`, style: { '--i': i } });
+  // From the previous value to the new one, so a comparison change reads as a change.
+  if (prev && !reducedMotion() && Math.abs(prev.w - w) > 0.5) rect.animate([{ transform: `scaleX(${prev.w / w})` }, { transform: 'none' }], { duration: 560, easing: EASE });
+  return rect;
 }
 
 // Retention curves with optional segment markers and a playhead.
@@ -152,4 +178,15 @@ export function sparkline(values, { width = 120, height = 32, tone = 'accent' } 
   const y = (v) => height - 3 - ((v - min) / (max - min || 1)) * (height - 6);
   return h('svg', { width, height, viewBox: `0 0 ${width} ${height}`, class: `spark ${tone}`, 'aria-hidden': 'true' },
     h('path', { d: values.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ') }));
+}
+
+// Re-highlight an already drawn timeline without re-rendering it (hovering a finding lights its videos).
+export function highlightTimeline(chartEl, predicate, focusId = null) {
+  if (!chartEl) return;
+  chartEl.querySelectorAll('.dot').forEach((g) => {
+    const on = predicate ? predicate(g.dataset.id) : false;
+    g.classList.toggle('hi', on);
+    g.classList.toggle('lo', !!predicate && !on);
+    g.classList.toggle('focus', g.dataset.id === focusId);
+  });
 }

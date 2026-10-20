@@ -34,12 +34,16 @@ export function videoPreview(v, { at = 0, focusSource } = {}) {
   const caption = h('p', { class: 'vp-caption', 'aria-live': 'polite' });
 
   const activeSeg = () => segs.find((s) => playhead >= s.start && playhead <= s.end);
+  const jumps = segs.map((s) => h('button', { class: `chip jump ${s.source === focusSource ? 'focus' : ''}`, type: 'button', onclick: () => { playhead = s.start; draw(); } },
+    h('span', { class: 'num' }, formatTime(s.start)), ` ${s.label}`));
   function draw() {
     readout.textContent = `${formatTime(playhead)} / ${formatTime(v.dur)}`;
     scrub.value = playhead;
     const seg = activeSeg();
     caption.textContent = seg ? `${seg.label} · ${seg.name}` : 'No evidence window at this point.';
     screen.classList.toggle('in-seg', !!seg);
+    // The sample moment being played lights up its jump chip and evidence window.
+    jumps.forEach((j, i) => j.classList.toggle('active', segs[i] === seg));
     playBtn.replaceChildren(icon(playing ? 'pause' : 'play', 16), playing ? 'Pause' : 'Play');
     const w = chartHost.clientWidth || 520;
     chartHost.replaceChildren(curve
@@ -60,8 +64,7 @@ export function videoPreview(v, { at = 0, focusSource } = {}) {
   root.append(screen,
     h('div', { class: 'vp-controls' }, playBtn, scrub, readout),
     caption,
-    h('div', { class: 'vp-jumps' }, segs.map((s) => h('button', { class: `chip jump ${s.source === focusSource ? 'focus' : ''}`, onclick: () => { playhead = s.start; draw(); } },
-      h('span', { class: 'num' }, formatTime(s.start)), ` ${s.label}`))),
+    h('div', { class: 'vp-jumps' }, jumps),
     chartHost,
     h('p', { class: 'fine dim' }, curve ? 'Retention curve is synthetic sample data. In the product it needs the yt-analytics.readonly permission, requested only when this view is turned on.' : ''));
   requestAnimationFrame(draw);

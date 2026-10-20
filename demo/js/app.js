@@ -4,7 +4,7 @@
 
 import { h, icon, symbol, wordmark, mount, reducedMotion } from './ui/dom.js';
 import { closeAll, dialog } from './ui/overlay.js';
-import { skeleton } from './ui/components.js';
+import { initMotionPreference, motionToggle } from './ui/motion.js';
 import { getState, setState, subscribe } from './state.js';
 import { RANGES, getRange, LAST_CHECK, formatDate } from './data/derive.js';
 import { channel } from './data/fixtures.js';
@@ -41,6 +41,7 @@ const NAV = [
 const ROUTES = Object.fromEntries(NAV.flatMap((g) => g.items).map((i) => [i.id, i]));
 ROUTES.onboarding = { id: 'onboarding', label: 'Onboarding', view: onboarding, bare: true };
 
+initMotionPreference();
 const app = document.getElementById('app');
 let current = { key: null };
 
@@ -89,6 +90,7 @@ function shell(route, content, state) {
     NAV.map((g) => h('div', { class: 'nav-group' }, h('span', { class: 'nav-label' }, g.group),
       g.items.map((i) => h('a', { href: `#/${i.id}`, class: `nav-item ${route === i.id ? 'active' : ''}`, 'aria-current': route === i.id ? 'page' : null, onclick: () => document.body.classList.remove('nav-open') }, icon(i.icon), h('span', null, i.label))))),
     h('div', { class: 'side-foot' },
+      motionToggle(),
       h('a', { class: 'btn btn-ghost btn-sm', href: '#/onboarding' }, 'Replay onboarding'),
       h('a', { class: 'btn btn-quiet btn-sm', href: '../' }, icon('back', 14), 'Back to merlark.com')));
   const top = h('header', { class: 'topbar' },
@@ -123,11 +125,11 @@ function render() {
   }
   if (def.bare) { mount(app, content); return; }
   const scrollY = routeChanged ? 0 : window.scrollY;
-  if (routeChanged && !reducedMotion()) {
-    mount(app, shell(route, skeleton(4), state));
-    setTimeout(() => { if (current.key === key) { mount(app, shell(route, content, state)); app.querySelector('.main').classList.add('enter'); app.querySelector('#main').focus({ preventScroll: true }); } }, 180);
-  } else {
-    mount(app, shell(route, content, state));
+  // Navigation is immediate; the dock-in entrance plays on the new content without delaying it.
+  mount(app, shell(route, content, state));
+  if (routeChanged) {
+    if (!reducedMotion()) app.querySelector('.main').classList.add('enter');
+    app.querySelector('#main').focus({ preventScroll: true });
   }
   window.scrollTo(0, scrollY);
   document.title = `${def.label} · Merlark demo`;

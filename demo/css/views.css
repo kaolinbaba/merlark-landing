@@ -219,3 +219,15 @@
 @media (prefers-reduced-motion: reduce) {
   .onboard-bg .orb, .welcome-orbit .sym, .iv-card, .block, .calib-list li, .ob-card { animation: none !important; }
 }
+
+/* Intervention progress */
+.iv-track { list-style: none; display: flex; gap: 4px; padding: 0; margin: 0; font-size: 10.5px; color: var(--text-dim); }
+.iv-track li { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iv-track i { height: 3px; border-radius: 2px; background: var(--surface-3); }
+.iv-track li.done i { background: rgba(94,230,168,0.5); }
+.iv-track li.now { color: var(--text); } .iv-track li.now i { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.iv-card.advanced { animation: ivAdvance 1.1s var(--ease-out); }
+.iv-card.advanced .iv-track li.now i { animation: trackFill 700ms var(--ease-out) both 150ms; transform-origin: left; }
+@keyframes ivAdvance { 0% { box-shadow: 0 0 0 0 rgba(54,226,208,0.6); } 40% { box-shadow: 0 0 0 6px rgba(54,226,208,0.15), 0 0 40px -10px var(--accent); } 100% { box-shadow: none; } }
+@keyframes trackFill { from { transform: scaleX(0); } }
+.motion-off .iv-card.advanced, .motion-off .iv-card.advanced .iv-track li.now i { animation: none; }

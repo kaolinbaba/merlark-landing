@@ -9,6 +9,10 @@ import { emptyState, chartWidth, previewChip, thumb } from '../ui/components.js'
 import { findingStats, getRange, videoById, formatDate, formatInt, formatShort, hasReading, TODAY } from '../data/derive.js';
 import { findings } from '../data/fixtures.js';
 import { getState, setState } from '../state.js';
+import { captureRects, playFlip } from '../ui/motion.js';
+
+const CARD_SEL = '.iv-card[data-key]';
+let justChanged = null; // the card that just moved, so it can show its new state
 
 const COLS = [
   { id: 'planned', label: 'Planned' },
@@ -34,6 +38,7 @@ export function planIntervention(findingId) {
       { label: 'Add to tracker', variant: 'btn-primary', onClick: () => {
         const st = getState();
         const id = `I${st.interventions.length + 1}${Date.now().toString(36).slice(-3)}`;
+        justChanged = id;
         setState({ interventions: [...st.interventions, { id, findingId, title: title.trim() || f.action, status: 'planned', created: TODAY, started: null, ended: null, appliedTo: [], target, outcome: null, creatorNote: '' }] });
         toast('Intervention planned. Find it under Act → Interventions.');
       } },
@@ -42,19 +47,24 @@ export function planIntervention(findingId) {
 }
 
 function update(id, patch) {
+  const before = captureRects(CARD_SEL);
+  justChanged = id;
   setState((st) => ({ interventions: st.interventions.map((i) => (i.id === id ? { ...i, ...patch } : i)) }));
+  playFlip(before, CARD_SEL); // the card travels to its new column
 }
 
 function recordOutcome(iv) {
-  let kind = iv.appliedTo.length ? 'observed' : 'creator';
+  // "Observed" needs at least one tracked upload whose 7-day reading exists — the same rule the outcome panel uses.
+  const readable = iv.appliedTo.map(videoById).filter((v) => v && hasReading(v, TODAY));
+  let kind = readable.length ? 'observed' : 'creator';
   let note = '';
   dialog({
     label: 'Record outcome',
     title: iv.title,
     body: h('div', { class: 'form' },
       h('fieldset', null, h('legend', null, 'Where does this outcome come from?'),
-        h('label', { class: 'radio' }, h('input', { type: 'radio', name: 'k', value: 'observed', checked: kind === 'observed', disabled: !iv.appliedTo.length, onchange: () => { kind = 'observed'; } }),
-          h('span', null, h('strong', null, 'Observed'), iv.appliedTo.length ? ` — the 7-day readings of ${iv.appliedTo.length} upload${iv.appliedTo.length > 1 ? 's' : ''} after the start date` : ' — no uploads after the start date in the sample data yet')),
+        h('label', { class: 'radio' }, h('input', { type: 'radio', name: 'k', value: 'observed', checked: kind === 'observed', disabled: !readable.length, onchange: () => { kind = 'observed'; } }),
+          h('span', null, h('strong', null, 'Observed'), readable.length ? ` — the 7-day readings of ${readable.length} upload${readable.length > 1 ? 's' : ''} after the start date` : ' — no tracked upload has a 7-day reading yet')),
         h('label', { class: 'radio' }, h('input', { type: 'radio', name: 'k', value: 'creator', checked: kind === 'creator', onchange: () => { kind = 'creator'; } }),
           h('span', null, h('strong', null, 'Creator-reported'), ' — what you noticed yourself'))),
       h('label', null, h('span', null, 'Note (optional)'), h('textarea', { rows: 3, maxlength: 280, placeholder: 'e.g. Editing took longer; comments mentioned the map.', oninput: (e) => { note = e.target.value; } }))),
@@ -83,8 +93,12 @@ function outcomePanel(iv) {
 function card(iv) {
   const f = findings.find((x) => x.id === iv.findingId);
   const progress = iv.target ? Math.min(iv.appliedTo.length, iv.target) : iv.appliedTo.length;
-  return h('article', { class: `iv-card iv-${iv.status}` },
+  const order = COLS.map((c) => c.id); const at = order.indexOf(iv.status);
+  const advanced = justChanged === iv.id;
+  if (advanced) justChanged = null;
+  return h('article', { class: `iv-card iv-${iv.status} ${advanced ? 'advanced' : ''}`, 'data-key': iv.id },
     h('header', null, h('span', { class: 'dim num' }, iv.id.slice(0, 4)), h('a', { href: `#/findings/${f.id}`, class: 'chip' }, f.name)),
+    h('ol', { class: 'iv-track', 'aria-label': `Status: ${COLS[at].label}` }, COLS.map((c, i) => h('li', { class: i < at ? 'done' : i === at ? 'now' : '' }, h('i', { 'aria-hidden': 'true' }), c.label))),
     h('h3', null, iv.title),
     h('dl', { class: 'facts' },
       h('dt', null, 'Planned'), h('dd', null, formatDate(iv.created)),

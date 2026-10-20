@@ -45,9 +45,9 @@ function videoMode(cmp, setCmp) {
     read.length < 2 ? emptyState('Pick at least two videos with readings', chosen.length && read.length < chosen.length ? 'One selected video is still in its first 7 days, so it has no reading yet.' : 'Add videos from the menu above or from the video library.')
       : h('div', { class: 'two-col' },
         h('section', { class: 'card' }, sectionHead('7-day views', 'First week after publishing'),
-          barChart({ width: w, rows: read.map((v) => ({ label: v.title, note: formatShort(v.date), value: v.views7, display: formatInt(v.views7), tone: TONES[chosen.indexOf(v)] })) })),
+          barChart({ key: 'cmp-v-views', width: w, rows: read.map((v) => ({ id: v.id, label: v.title, note: formatShort(v.date), value: v.views7, display: formatInt(v.views7), tone: TONES[chosen.indexOf(v)] })) })),
         h('section', { class: 'card' }, sectionHead('Average viewed', 'Share of each video watched'),
-          barChart({ width: w, max: 100, rows: read.map((v) => ({ label: v.title, note: v.ret30 != null ? `${v.ret30}% still watching at 0:30` : 'Short', value: v.avgPct, display: `${v.avgPct}%`, tone: TONES[chosen.indexOf(v)] })) }))),
+          barChart({ key: 'cmp-v-avg', width: w, max: 100, rows: read.map((v) => ({ id: v.id, label: v.title, note: v.ret30 != null ? `${v.ret30}% still watching at 0:30` : 'Short', value: v.avgPct, display: `${v.avgPct}%`, tone: TONES[chosen.indexOf(v)] })) }))),
     read.length >= 2 && sameFormat ? h('section', { class: 'card' }, sectionHead('Retention shape', 'Synthetic curves, scaled to each video’s length'),
       h('div', { class: 'legend' }, read.map((v) => h('span', { class: `lgk t-${TONES[chosen.indexOf(v)]}` }, h('i'), v.title))),
       retentionChart({ width: chartWidth(), height: 220, duration: 100, curves: read.map((v) => ({ pts: retentionCurve(v).map((p) => ({ t: (p.t / v.dur) * 100, r: p.r })) })) }),
@@ -64,12 +64,12 @@ function groupMode(cmp, range, setCmp) {
       sectionHead(`${f.name} · ${range.label}`, s.multiplier == null ? 'Not enough videos to compare' : `Group is ${formatMultiplier(s.multiplier)} the channel baseline`, stateChip(s.state)),
       s.multiplier == null ? emptyState('Insufficient evidence', `${s.n} matching and ${s.nBaseline} baseline videos have a 7-day reading in this range; at least 3 of each are needed. Try “All history”.`)
         : h('div', { class: 'two-col' },
-          barChart({ width: w, rows: [
-            { label: f.name, note: `mean of ${s.n}`, value: s.groupViews, display: formatInt(s.groupViews), tone: 'accent' },
-            { label: 'Channel baseline', note: `median of ${s.nBaseline}`, value: s.baselineViews, display: formatInt(s.baselineViews), tone: 'base' }] }),
-          barChart({ width: w, max: 100, rows: [
-            { label: 'Average viewed', note: f.name, value: s.avgGroup, display: `${s.avgGroup}%`, tone: 'accent' },
-            { label: 'Average viewed', note: 'baseline', value: s.avgBase, display: `${s.avgBase}%`, tone: 'base' }] })),
+          barChart({ key: 'cmp-g-views', width: w, rows: [
+            { id: 'group', label: f.name, note: `mean of ${s.n}`, value: s.groupViews, display: formatInt(s.groupViews), tone: 'accent' },
+            { id: 'baseline', label: 'Channel baseline', note: `median of ${s.nBaseline}`, value: s.baselineViews, display: formatInt(s.baselineViews), tone: 'base' }] }),
+          barChart({ key: 'cmp-g-avg', width: w, max: 100, rows: [
+            { id: 'group', label: 'Average viewed', note: f.name, value: s.avgGroup, display: `${s.avgGroup}%`, tone: 'accent' },
+            { id: 'baseline', label: 'Average viewed', note: 'baseline', value: s.avgBase, display: `${s.avgBase}%`, tone: 'base' }] })),
       h('div', { class: 'cmp-lists' },
         list('In the group', s.group), list('Baseline', s.baseline))));
 }

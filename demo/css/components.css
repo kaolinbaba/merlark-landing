@@ -245,3 +245,26 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
   .curve { stroke-dashoffset: 0; }
 }
 .chart-tip[hidden], [hidden] { display: none !important; }
+
+/* Values that changed animate from where they were (charts.js); they skip the entrance animation. */
+.chart-timeline .dot.moved, .bar.moved { animation: none; }
+.dot.focus circle { r: 9; stroke: var(--amber); fill: var(--amber); filter: drop-shadow(0 0 8px var(--amber)); }
+.dot circle { transition: r var(--t-fast), fill var(--t-med), stroke var(--t-med); }
+.dot { transition: opacity var(--t-med); }
+.ev-list.illuminate .ev-row { animation: illum 900ms var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+@keyframes illum { from { opacity: 0; transform: translateX(-8px); border-color: rgba(54,226,208,0.7); box-shadow: 0 0 24px -8px var(--accent); } }
+.motion-off .ev-list.illuminate .ev-row { animation: none; }
+
+/* Playback: the active evidence window */
+.chip.jump.active { color: var(--accent-ink); background: var(--amber); border-color: var(--amber); box-shadow: 0 0 16px -4px var(--amber); }
+.vp-screen.in-seg .vp-reticle i:first-child { border-color: var(--amber); animation: reticleLock 600ms var(--ease-out); }
+@keyframes reticleLock { from { transform: scale(1.6); opacity: 0; } }
+
+/* Evidence drawer docks: slides in, settles with a short lock-on of its edge. */
+.drawer-panel { transform: translateX(104%) scale(0.98); transform-origin: right center; transition: transform 420ms var(--ease-dock), box-shadow 600ms; }
+.open .drawer-panel { transform: none; box-shadow: var(--shadow-2), -1px 0 0 rgba(54,226,208,0.5), -30px 0 60px -40px var(--accent); }
+.open .drawer-panel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), transparent 30%, transparent 70%, var(--accent)); animation: dockEdge 900ms var(--ease-out) both 200ms; }
+@keyframes dockEdge { from { opacity: 0; transform: scaleY(0.2); } to { opacity: 0.8; } }
+.motion-off .drawer-panel, .motion-off .dialog-panel { transition: none; }
+.motion-off .open .drawer-panel::before, .motion-off .main.enter > *, .motion-off .chart-timeline .dot, .motion-off .bar, .motion-off .curve { animation: none !important; }
+.motion-off .curve { stroke-dashoffset: 0; }

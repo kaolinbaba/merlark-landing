@@ -68,7 +68,7 @@ export function render(_r, ctx) {
         h('div', { class: 'bc obs' }, h('span', { class: 'chip prov prov-observed' }, 'Observed by Merlark'),
           h('b', { class: 'num' }, String(obsCount)), h('span', null, `videos, ${formatShort(CONNECTED_AT)} – ${formatShort(TODAY)}`),
           h('p', { class: 'muted' }, 'Recorded while the channel was connected: upload detection and 7-day readings.'))),
-      timelineChart({ videos: videos.filter((v) => v.format === 'long'), range: fullRange, width: chartWidth(), onSelect: (v) => ctx.navigate(`#/videos/${v.id}`) }),
+      timelineChart({ key: 'monitor', videos: videos.filter((v) => v.format === 'long'), range: fullRange, width: chartWidth(), onSelect: (v) => ctx.navigate(`#/videos/${v.id}`) }),
       h('p', { class: 'fine dim' }, 'Backfill reconstructs history from what is still accessible, so it tends to look better than reality: removed videos are often the weakest ones.')),
 
     h('section', { class: 'card' },

@@ -3,10 +3,10 @@
 // and the separate Pattern watch panel (structural resemblance, no score).
 
 import { h, icon } from '../ui/dom.js';
-import { barChart } from '../ui/charts.js';
+import { barChart, timelineChart, highlightTimeline } from '../ui/charts.js';
 import { stateChip, qualityBadge, multiplierLine, obsInterp, evidenceRow, sectionHead, emptyState, insufficientPanel, chartWidth, previewChip } from '../ui/components.js';
 import { allFindingStats, evidenceFor, patternWatchStats, STATE_LABEL, STATE_RULES, QUALITY_HELP, formatInt, formatShort, formatTime, formatDate } from '../data/derive.js';
-import { patternWatch, findings } from '../data/fixtures.js';
+import { patternWatch, findings, videos } from '../data/fixtures.js';
 import { setState } from '../state.js';
 import { openEvidence } from './evidence.js';
 import { planIntervention } from './interventions.js';
@@ -80,13 +80,13 @@ function detail(s, ctx) {
         sectionHead('Comparable baseline · same channel', s.multiplier == null ? 'No comparison yet' : h('span', null, multiplierLine(s))),
         s.multiplier == null
           ? h('p', { class: 'muted' }, 'Merlark draws no comparison until there are at least 3 matching and 3 baseline videos with a 7-day reading.')
-          : [barChart({ width: w, rows: [
-            { label: f.name, note: `n = ${s.n}`, value: s.groupViews, display: formatInt(s.groupViews), tone: 'accent' },
-            { label: 'Channel baseline', note: `median of ${s.nBaseline}`, value: s.baselineViews, display: formatInt(s.baselineViews), tone: 'base' },
+          : [barChart({ key: `fd-${f.id}-views`, width: w, rows: [
+            { id: 'group', label: f.name, note: `n = ${s.n}`, value: s.groupViews, display: formatInt(s.groupViews), tone: 'accent' },
+            { id: 'baseline', label: 'Channel baseline', note: `median of ${s.nBaseline}`, value: s.baselineViews, display: formatInt(s.baselineViews), tone: 'base' },
           ] }),
-          s.retGroup != null ? barChart({ width: w, max: 100, rows: [
-            { label: 'Still watching at 0:30', note: f.name, value: s.retGroup, display: `${s.retGroup}%`, tone: 'accent' },
-            { label: 'Still watching at 0:30', note: 'baseline', value: s.retBase, display: `${s.retBase}%`, tone: 'base' },
+          s.retGroup != null ? barChart({ key: `fd-${f.id}-ret`, width: w, max: 100, rows: [
+            { id: 'group', label: 'Still watching at 0:30', note: f.name, value: s.retGroup, display: `${s.retGroup}%`, tone: 'accent' },
+            { id: 'baseline', label: 'Still watching at 0:30', note: 'baseline', value: s.retBase, display: `${s.retBase}%`, tone: 'base' },
           ] }) : null,
           h('p', { class: 'fine dim' }, '7-day views (mean of the group, median of the baseline). Association only: these videos may differ in other ways too.')]),
       h('section', { class: 'card next-action' },
@@ -101,9 +101,23 @@ function detail(s, ctx) {
           h('dt', null, 'First seen'), h('dd', null, formatDate(s.firstSeen)),
           h('dt', null, 'Videos with this pattern'), h('dd', null, `${s.groupAll.length} in range${s.pending.length ? `, ${s.pending.length} awaiting a reading` : ''}`),
           h('dt', null, 'Relevant period'), h('dd', null, `${formatShort(ctx.range.start)} – ${formatShort(ctx.range.end)}, first 7 days of each upload`)))),
-    h('section', { class: 'card' },
+    h('section', { class: 'card evidence-card' },
       sectionHead('Evidence', `${ev.length} videos with timestamps`),
-      ev.length ? h('div', { class: 'ev-list' }, ev.slice().reverse().map((e) => evidenceRow(e, () => openEvidence({ ...e, findingId: f.id, findingName: f.name }))))
+      ev.length ? timelineChart({ key: `fd-${f.id}-tl`, height: 170, width: chartWidth(), range: ctx.range,
+        videos: videos.filter((v) => (f.scope === 'short' ? v.format === 'short' : v.format === 'long') && v.date >= ctx.range.start && v.date <= ctx.range.end),
+        highlight: (v) => s.groupAll.includes(v), baseline: s.baselineViews || null,
+        onSelect: (v) => { const e = ev.find((x) => x.video.id === v.id); if (e) openEvidence({ ...e, findingId: f.id, findingName: f.name }); else ctx.navigate(`#/videos/${v.id}`); } }) : null,
+      ev.length ? h('div', { class: 'ev-list illuminate' }, ev.slice().reverse().map((e, i) => {
+        // Pointing at a source isolates its dot on the timeline.
+        const row = evidenceRow(e, () => openEvidence({ ...e, findingId: f.id, findingName: f.name }));
+        row.style.setProperty('--i', i);
+        const tl = () => document.querySelector('.evidence-card .chart-timeline');
+        const on = () => highlightTimeline(tl(), (id) => s.groupAll.some((v) => v.id === id), e.video.id);
+        const off = () => highlightTimeline(tl(), (id) => s.groupAll.some((v) => v.id === id));
+        row.addEventListener('pointerenter', on); row.addEventListener('focus', on);
+        row.addEventListener('pointerleave', off); row.addEventListener('blur', off);
+        return row;
+      }))
         : emptyState('No evidence in this range', 'No uploads in the selected range show this pattern.')),
     otherFindings(f.id));
 }

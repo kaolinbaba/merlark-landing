@@ -34,7 +34,9 @@ export const clear = (el) => { while (el.firstChild) el.removeChild(el.firstChil
 export const mount = (el, ...children) => { clear(el); append(el, children); return el; };
 export const qs = (sel, root = document) => root.querySelector(sel);
 
-export const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Motion is off when the OS asks for reduced motion OR the visitor turned it off with the site's motion toggle.
+export const reducedMotion = () =>
+  document.documentElement.classList.contains('motion-off') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Merlark symbol, inline so it inherits colour from CSS.
 export function symbol(size = 28, small = size <= 28) {

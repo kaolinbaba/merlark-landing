@@ -98,3 +98,11 @@ export function chartWidth(fraction = 1) {
   const pad = vw < 640 ? 32 + 34 : 64 + 50;
   return Math.max(260, Math.floor((main - pad) * fraction));
 }
+
+// Compact finding card for previews outside the app shell (landing page).
+export function findingCardLite(s, href = `demo/#/findings/${s.finding.id}`) {
+  return h('a', { class: `finding-card state-${s.state}`, href },
+    h('div', { class: 'fc-top' }, stateChip(s.state), h('span', { class: 'dim num' }, s.finding.id)),
+    h('h3', null, s.finding.name),
+    h('div', { class: 'fc-foot' }, multiplierLine(s), qualityBadge(s.quality)));
+}

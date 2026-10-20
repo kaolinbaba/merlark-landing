@@ -2,9 +2,10 @@
 // The Bridge: main finding first, then its evidence and the next useful action, then the instruments.
 
 import { h, icon } from '../ui/dom.js';
-import { timelineChart } from '../ui/charts.js';
+import { tweenText } from '../ui/motion.js';
+import { timelineChart, highlightTimeline } from '../ui/charts.js';
 import { stateChip, qualityBadge, multiplierLine, obsInterp, evidenceRow, sectionHead, emptyState, chartWidth } from '../ui/components.js';
-import { allFindingStats, mainFinding, evidenceFor, channelTotals, patternWatchStats, weeks, briefFor, formatDate, formatShort, STATE_LABEL } from '../data/derive.js';
+import { videoById, allFindingStats, mainFinding, evidenceFor, channelTotals, patternWatchStats, weeks, briefFor, formatDate, formatShort, STATE_LABEL } from '../data/derive.js';
 import { videos, channel } from '../data/fixtures.js';
 import { openEvidence } from './evidence.js';
 import { planIntervention } from './interventions.js';
@@ -55,14 +56,19 @@ export function render(_route, ctx) {
     h('section', { class: 'card' },
       sectionHead('Upload timeline', '7-day views per long-form upload',
         h('span', { class: 'legend' }, h('i', { class: 'lg hist' }), 'Historical estimate', h('i', { class: 'lg obs' }), 'Observed', h('i', { class: 'lg hi' }), main.finding.name)),
-      timelineChart({ videos: videos.filter((v) => v.format === 'long' && v.date >= range.start && v.date <= range.end), range, highlight: main.finding.match, baseline: main.baselineViews, width, onSelect: (v) => navigate(`#/videos/${v.id}`) }),
+      timelineChart({ key: 'bridge', videos: videos.filter((v) => v.format === 'long' && v.date >= range.start && v.date <= range.end), range, highlight: main.finding.match, baseline: main.baselineViews, width, onSelect: (v) => navigate(`#/videos/${v.id}`) }),
       h('p', { class: 'fine dim' }, 'Select a dot to open the video. Left of the line is reconstructed after connection and may miss deleted, private or unavailable videos.')),
 
     h('div', { class: 'two-col' },
       h('section', { class: 'card' },
         sectionHead('All findings', 'Pattern readings', h('a', { class: 'btn btn-quiet btn-sm', href: '#/findings' }, 'View all', icon('arrow', 14))),
-        h('ul', { class: 'mini-findings' }, stats.map((s) => h('li', null,
-          h('a', { href: `#/findings/${s.finding.id}` }, h('span', null, s.finding.name), stateChip(s.state)))))),
+        h('ul', { class: 'mini-findings' }, stats.map((s) => {
+          // Hovering or focusing a finding lights up its videos on the timeline above.
+          const light = () => highlightTimeline(document.querySelector('.overview .chart-timeline'), (id) => s.groupAll.some((v) => v.id === id));
+          const reset = () => highlightTimeline(document.querySelector('.overview .chart-timeline'), (id) => main.finding.match(videoById(id)));
+          return h('li', null, h('a', { href: `#/findings/${s.finding.id}`, onpointerenter: light, onfocus: light, onpointerleave: reset, onblur: reset },
+            h('span', null, s.finding.name), stateChip(s.state)));
+        }))),
       h('section', { class: 'card' },
         sectionHead('Weekly brief', `${formatShort(latest.week.start)} – ${formatShort(latest.week.end)}`, h('a', { class: 'btn btn-quiet btn-sm', href: '#/brief' }, 'Read', icon('arrow', 14))),
         h('ul', { class: 'brief-teaser' },
@@ -71,5 +77,8 @@ export function render(_route, ctx) {
           h('li', null, `Pattern watch: ${pw.n} uploads share one series template in this range`)))));
 }
 
+// Numeric readouts count from their previous value when the date range changes.
 const instrument = (label, value, sub) => h('div', { class: 'instrument' },
-  h('span', { class: 'dim' }, label), h('b', { class: 'num' }, String(value)), h('small', { class: 'muted' }, sub));
+  h('span', { class: 'dim' }, label),
+  typeof value === 'number' ? tweenText(h('b', { class: 'num' }), `inst:${label}`, value) : h('b', { class: 'num' }, String(value)),
+  h('small', { class: 'muted' }, sub));
