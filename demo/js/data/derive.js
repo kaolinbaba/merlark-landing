@@ -48,20 +48,20 @@ const median = (xs) => {
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 
 export const STATE_RULES = [
-  { state: 'insufficient', rule: 'Fewer than 3 matching videos or fewer than 3 comparable baseline videos with a 7-day reading.' },
-  { state: 'emerging', rule: 'First seen in the last 35 days and at least 1.1× the channel baseline.' },
-  { state: 'working', rule: 'At least 1.2× the channel baseline.' },
-  { state: 'slipping', rule: 'At most 0.9× the channel baseline.' },
-  { state: 'neutral', rule: 'Between 0.9× and 1.2× the channel baseline.' },
+  { state: 'insufficient', rule: 'Fewer than 3 matching videos, or fewer than 3 of your other videos, with a first-week reading.' },
+  { state: 'emerging', rule: 'First spotted in the last 35 days, and at least 1.1× your usual.' },
+  { state: 'working', rule: 'At least 1.2× your usual.' },
+  { state: 'slipping', rule: '0.9× your usual or less.' },
+  { state: 'neutral', rule: 'Between 0.9× and 1.2× your usual.' },
 ];
 export const STATE_LABEL = {
-  working: 'Working', slipping: 'Slipping', neutral: 'Neutral', emerging: 'Emerging', insufficient: 'Insufficient evidence',
+  working: 'Working', slipping: 'Slipping', neutral: 'Neutral', emerging: 'Emerging', insufficient: 'Not enough data yet',
 };
 export const QUALITY_HELP = {
-  Strong: '6+ matching videos and at least 80% of them on the same side of the baseline.',
-  Moderate: '4+ matching videos and at least 60% on the same side of the baseline.',
-  Limited: '3 matching videos, or results that point in different directions.',
-  Insufficient: 'Not enough comparable videos to read this pattern.',
+  Strong: '6+ matching videos, and at least 80% of them land on the same side of your usual.',
+  Moderate: '4+ matching videos, and at least 60% land on the same side of your usual.',
+  Limited: '3 matching videos, or results that point different ways.',
+  Insufficient: 'Not enough similar videos to read this pattern yet.',
 };
 
 const firstSeen = (f) => videos.filter(f.match).map((v) => v.date).sort()[0];
@@ -127,9 +127,9 @@ export function monitoringLog() {
   const ev = [...extraEvents];
   for (const v of videos) {
     if (v.date < CONNECTED_AT) continue;
-    ev.push({ date: v.date, time: '18:20', type: 'upload', videoId: v.id, text: `New upload detected: "${v.title}".` });
+    ev.push({ date: v.date, time: '18:20', type: 'upload', videoId: v.id, text: `New upload spotted: "${v.title}".` });
     if (hasReading(v, TODAY)) {
-      ev.push({ date: readingDate(v), time: '18:25', type: 'reading', videoId: v.id, text: `7-day reading recorded for "${v.title}": ${formatInt(v.views7)} views.` });
+      ev.push({ date: readingDate(v), time: '18:25', type: 'reading', videoId: v.id, text: `First-week reading saved for "${v.title}": ${formatInt(v.views7)} views.` });
     }
   }
   return ev.sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));

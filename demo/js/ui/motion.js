@@ -1,6 +1,6 @@
 // demo/js/ui/motion.js
 // Shared motion helpers: FLIP transitions for re-rendered lists, the visitor-controlled motion toggle,
-// and pausing ambient animation while the tab is hidden. Transforms and opacity only.
+// count-up readouts, and pausing animation while the tab is hidden. Transforms and opacity only.
 
 import { h, icon, reducedMotion } from './dom.js';
 
@@ -72,5 +72,35 @@ export function tweenText(el, key, value, format = (n) => String(Math.round(n)))
   };
   el.textContent = format(prev);
   requestAnimationFrame(step);
+  return el;
+}
+
+// Readouts count up once, the first time they scroll into view (per key, per page load).
+// `from` sets the starting point: multipliers start at 1 ("your usual") so no in-between frame shows a misleading ratio.
+const counted = new Set();
+const live = new WeakMap(); // element -> cancel() for its running count, so a newer call always wins
+export function stopCount(el) { const c = live.get(el); if (c) { c(); live.delete(el); } }
+export function countUp(el, key, value, format = (n) => String(Math.round(n)), from = 0) {
+  stopCount(el);
+  el.textContent = format(value);
+  if (counted.has(key) || reducedMotion() || !('IntersectionObserver' in window)) return el;
+  let raf = 0; let timer = 0; let done = false;
+  const io = new IntersectionObserver((entries) => {
+    if (done || !entries.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    if (counted.has(key)) return;
+    counted.add(key);
+    const t0 = performance.now(); const dur = 700;
+    const step = (now) => {
+      if (done) return;
+      const k = Math.min(1, (now - t0) / dur); const e = 1 - (1 - k) ** 3;
+      el.textContent = format(from + (value - from) * e);
+      if (k < 1 && el.isConnected) raf = requestAnimationFrame(step); else el.textContent = format(value);
+    };
+    raf = requestAnimationFrame(step);
+    timer = setTimeout(() => { if (!done) el.textContent = format(value); }, dur + 150); // lands on the true value even if frames were throttled
+  }, { threshold: 0.4 });
+  io.observe(el);
+  live.set(el, () => { done = true; io.disconnect(); cancelAnimationFrame(raf); clearTimeout(timer); });
   return el;
 }

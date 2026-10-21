@@ -1,105 +1,76 @@
-/* Merlark design tokens — "research studio at night". Single source for landing, brand page and demo.
-   Charcoal, petrol and ivory carry the page; amber is reserved for discoveries, focal points and key actions;
-   a restrained sea-green draws analytical connections. */
-@font-face { font-family: "Instrument Serif"; src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Serif"; src: url("../fonts/instrument-serif-latin-400-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
-@font-face { font-family: "Inter"; src: url("../fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+/* Merlark design tokens — "the friendly control panel". Single source for landing, brand page and demo.
+   Warm paper, white panels, ink outlines, flat pastels. Coral is the one action colour. */
+@font-face { font-family: "Fredoka"; src: url("../fonts/fredoka-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Figtree"; src: url("../fonts/figtree-latin-wght-normal.woff2") format("woff2"); font-weight: 300 900; font-style: normal; font-display: swap; }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* Palette */
-  --ink: #080c0d;
-  --petrol: #0c2228;
-  --petrol-2: #113039;
-  --ivory: #f3ebdc;
-  --amber-rgb: 217, 165, 101;
-  --sea-rgb: 120, 184, 166;
-  --hist-rgb: 190, 172, 140;
-  --ivory-rgb: 243, 235, 220;
-  --line-rgb: 64, 86, 88;
+  /* Surfaces and ink */
+  --paper: #fbf7f0;
+  --panel: #ffffff;
+  --ink: #1f1c2c;
+  --ink-muted: #6b6779;
+  --ink-soft: rgba(31, 28, 44, 0.12);
+  --ink-line: rgba(31, 28, 44, 0.16);
 
-  /* Foundation (names kept so every screen re-themes from here) */
-  --space-0: #050809;
-  --space-1: var(--ink);
-  --space-2: #0a1214;
-  --surface-1: rgba(14, 30, 34, 0.72);
-  --surface-2: rgba(20, 42, 48, 0.78);
-  --surface-3: rgba(28, 54, 60, 0.9);
-  --surface-glass: rgba(12, 34, 40, 0.66);
-  --line: rgba(var(--line-rgb), 0.38);
-  --line-strong: rgba(var(--line-rgb), 0.7);
-  --edge-glow: rgba(var(--amber-rgb), 0.35);
+  /* Pastels — flat fills only */
+  --mint: #bfebd6;
+  --butter: #ffe8a3;
+  --peach: #ffcdb8;
+  --lilac: #dcd2ff;
+  --sky: #c6e4ff;
+  --fog: #ece8e1;
 
-  /* Text (all >= 4.5:1 on --ink and --petrol) */
-  --text: var(--ivory);
-  --text-muted: #c2bcaf;
-  --text-dim: #8f9a95;
+  /* The one action colour: primary buttons, the watching lamp, the key number. Nothing else. */
+  --coral: #ff6a4d;
+  --coral-press: #e9553a;
+  --coral-ink: #1f1c2c;
 
-  /* Accents */
-  --accent: #8fc4b4;            /* sea-green: links, focus, connections */
-  --accent-strong: #b5ddd0;
-  --accent-soft: rgba(var(--sea-rgb), 0.12);
-  --accent-ink: #1a1206;
-  --sea: rgb(var(--sea-rgb));
-  --violet: rgb(var(--hist-rgb)); /* legacy name: now warm parchment for historical estimates */
-  --violet-soft: rgba(var(--hist-rgb), 0.1);
-  --amber: #d9a565;
-  --amber-strong: #ecc08a;
-  --amber-soft: rgba(var(--amber-rgb), 0.13);
-  --danger: #e48a7a;
-  --danger-soft: rgba(228, 138, 122, 0.12);
-
-  /* Finding states (performance trend, §5.9) */
-  --state-working: #9fd1b8;
-  --state-slipping: #d58f6c;
-  --state-neutral: #a6aea9;
-  --state-emerging: #b9cbd6;
-  --state-insufficient: #7f8a86;
+  /* Finding states (§5.9) — fixed forever */
+  --state-working: var(--mint);
+  --state-slipping: var(--peach);
+  --state-emerging: var(--butter);
+  --state-neutral: var(--fog);
+  --state-insufficient: var(--fog);
+  --hatch: repeating-linear-gradient(135deg, rgba(31, 28, 44, 0.14) 0 2px, transparent 2px 8px);
 
   /* Provenance (§6.7) */
-  --prov-historical: rgb(var(--hist-rgb)); /* category 4 — historical estimate */
-  --prov-observed: #8fc4b4;                /* category 5 — observed by Merlark */
+  --prov-historical: var(--lilac);   /* category 4 — historical estimate */
+  --prov-observed: var(--sky);       /* category 5 — observed by Merlark */
 
   /* Type */
-  --font-serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  --font-display: var(--font-serif);
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --font-display: "Fredoka", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --fs-xs: 12px;
-  --fs-sm: 13.5px;
-  --fs-md: 15px;
-  --fs-lg: 17px;
-  --fs-xl: 22px;
-  --fs-2xl: 30px;
-  --fs-3xl: clamp(40px, 5.4vw, 76px);
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-3xl: clamp(40px, 6vw, 72px);
 
-  /* Spacing: 4px base */
-  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px; --s16: 64px;
+  /* 8px grid */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px; --s16: 64px; --s20: 80px;
 
-  /* Shape and depth: low radii, light instead of borders */
-  --r-sm: 4px;
-  --r-md: 6px;
-  --r-lg: 8px;
+  /* Shape and depth */
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 28px;
   --r-pill: 999px;
-  --shadow-1: 0 18px 40px -24px rgba(0, 0, 0, 0.7);
-  --shadow-2: 0 30px 70px -30px rgba(0, 0, 0, 0.85);
-  --glow: 0 0 0 1px rgba(var(--amber-rgb), 0.35), 0 0 40px -10px rgba(var(--amber-rgb), 0.45);
+  --outline: 2px solid var(--ink);
+  --press: 0 3px 0 rgba(31, 28, 44, 0.12);
+  --press-ink: 0 3px 0 var(--ink);
+  --lift: 0 1px 0 rgba(31, 28, 44, 0.06), 0 8px 24px -12px rgba(31, 28, 44, 0.18);
 
-  /* Motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-dock: cubic-bezier(0.65, 0, 0.35, 1);
-  --t-fast: 140ms;
-  --t-med: 260ms;
-  --t-slow: 520ms;
-  /* Shared motion language (flow.js mirrors these): press · panel · analytical emphasis */
-  --t-press: 150ms;
-  --t-panel: 480ms;
-  --t-emph: 1000ms;
-  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);  /* critically damped feel, no overshoot */
-  --ease-flow: cubic-bezier(0.45, 0, 0.2, 1);
-}
+  /* Motion (micro only) */
+  --dur-press: 120ms;
+  --dur-pop: 260ms;
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-@media (prefers-reduced-motion: reduce) {
-  :root { --t-fast: 0ms; --t-med: 0ms; --t-slow: 0ms; --t-panel: 0ms; --t-emph: 0ms; }
+  --focus: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink);
+  --wrap: 1180px;
 }

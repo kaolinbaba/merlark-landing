@@ -1,9 +1,4 @@
-/* demo/css/boot.css — first paint before the app module loads, skip link, noscript. */
-.boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--text-muted); font-size: var(--fs-sm); }
-.boot svg { filter: drop-shadow(0 0 18px rgba(var(--amber-rgb), 0.35)); }
-.boot-body { animation: bootSignal 1.6s var(--ease-flow) infinite alternate; }
-@keyframes bootSignal { from { opacity: 0.35; } to { opacity: 1; } }
-.skip { position: absolute; left: 12px; top: -60px; z-index: 300; padding: 8px 14px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-.skip:focus { top: 12px; }
+/* demo/css/boot.css — first paint before the app module loads, and the no-JS note. */
+.boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--ink-muted); font: 600 var(--fs-sm)/1.2 var(--font-display); }
+.boot-eye { animation: lampBlink 1.4s ease-in-out infinite; }
 .noscript { text-align: center; padding: 40px 16px; }
-@media (prefers-reduced-motion: reduce) { .boot-body { animation: none; } }

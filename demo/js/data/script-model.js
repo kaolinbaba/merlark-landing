@@ -11,14 +11,14 @@ export const CANON = ['map', 'archive', 'variety', 's1', 's2', 'recap', 's3', 's
 
 export function grounding(src, statsById, pw) {
   if (src === 'P1') {
-    return pw.n ? { kind: 'grounded', label: 'From Pattern watch evidence' }
-      : { kind: 'ungrounded', label: 'Ungrounded suggestion · no Pattern watch evidence in this period' };
+    return pw.n ? { kind: 'grounded', label: 'From Pattern watch' }
+      : { kind: 'ungrounded', label: 'Suggestion only · no Pattern watch data in this period' };
   }
   const s = statsById[src];
-  if (s.state === 'insufficient') return { kind: 'ungrounded', label: 'Ungrounded suggestion · insufficient evidence' };
-  if (s.state === 'emerging') return { kind: 'grounded', label: 'Evidence-backed · emerging, limited evidence' };
-  if (s.state === 'neutral') return { kind: 'grounded', label: 'Evidence-backed · no difference found' };
-  return { kind: 'grounded', label: `Evidence-backed · ${STATE_LABEL[s.state].toLowerCase()}` };
+  if (s.state === 'insufficient') return { kind: 'ungrounded', label: 'Suggestion only · not enough data yet' };
+  if (s.state === 'emerging') return { kind: 'grounded', label: 'From your data · emerging, early days' };
+  if (s.state === 'neutral') return { kind: 'grounded', label: 'From your data · no difference found' };
+  return { kind: 'grounded', label: `From your data · ${STATE_LABEL[s.state].toLowerCase()}` };
 }
 
 export function assemble(script, statsById, pw) {
@@ -27,7 +27,7 @@ export function assemble(script, statsById, pw) {
   for (const id of CANON) {
     if (script.removed.includes(id)) continue;
     const scaffold = scaffoldBlocks.find((b) => b.id === id);
-    if (scaffold) { present.push({ id, section: scaffold.section, label: scaffold.label, text: scaffold.text(topic), source: null, ground: { kind: 'structure', label: 'Structure · not evidence-backed' } }); continue; }
+    if (scaffold) { present.push({ id, section: scaffold.section, label: scaffold.label, text: scaffold.text(topic), source: null, ground: { kind: 'structure', label: 'Structure · not from your data' } }); continue; }
     const src = Object.keys(SOURCE_BLOCK).find((k) => SOURCE_BLOCK[k] === id);
     if (!script.selected.includes(src)) continue;
     const b = scriptBlocks[id];
@@ -47,23 +47,23 @@ export function assemble(script, statsById, pw) {
 
 export function sourceLine(src, statsById, pw) {
   if (src === 'P1') {
-    return pw.n ? `[P1] ${patternWatch.name}: ${pw.n} uploads in this period share one template (Pattern watch, no score).`
-      : `[P1] ${patternWatch.name}: no uploads in this period share the template. Not used as evidence.`;
+    return pw.n ? `[P1] ${patternWatch.name}: ${pw.n} videos in this period share one template (Pattern watch, no score).`
+      : `[P1] ${patternWatch.name}: no videos in this period share the template. Not used as evidence.`;
   }
   const s = statsById[src];
   const name = s.finding.name;
   if (s.state === 'insufficient') {
-    return `[${src}] ${name}: insufficient evidence in this period (${s.n} matching ${s.n === 1 ? 'video has' : 'videos have'} a 7-day reading, ${s.nBaseline} baseline; 3 of each needed). Not used as evidence.`;
+    return `[${src}] ${name}: not enough data in this period (${s.n} matching ${s.n === 1 ? 'video has' : 'videos have'} a week-one reading, ${s.nBaseline} others; 3 of each needed). Not used as evidence.`;
   }
   const ev = evidenceFor(s).slice(-3).map((e) => `${e.video.title} ${formatTime(e.segment.start)}–${formatTime(e.segment.end)}`).join('; ');
-  return `[${src}] ${name}: ${STATE_LABEL[s.state].toLowerCase()}, ${formatMultiplier(s.multiplier)} channel baseline, evidence ${s.quality.toLowerCase()}, ${s.n} videos with 7-day readings. Examples: ${ev}.`;
+  return `[${src}] ${name}: ${STATE_LABEL[s.state].toLowerCase()}, ${formatMultiplier(s.multiplier)} your usual, evidence ${s.quality.toLowerCase()}, ${s.n} videos with week-one readings. Examples: ${ev}.`;
 }
 
 export function draftText({ topic, blocks }, statsById, pw, range) {
   const lines = [
     `# ${topic.title}`, '',
-    'Script outline assembled in the Merlark interactive demo from sample findings. No AI model was called.',
-    `Evidence period: ${range.label} (${formatDate(range.start)} – ${formatDate(range.end)}).`, '',
+    'Script outline put together in the Merlark demo from sample findings. No AI model was called.',
+    `Data period: ${range.label} (${formatDate(range.start)} – ${formatDate(range.end)}).`, '',
   ];
   let section = null;
   blocks.forEach((b) => {

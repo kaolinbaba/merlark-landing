@@ -5,8 +5,8 @@ import { h, reducedMotion } from './dom.js';
 
 // Last drawn positions per chart key, so a re-render (e.g. a date-range change) animates from old to new values.
 const memo = new Map();
-const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'; // shared settle curve (flow.js / tokens.css)
-// Values glide from where they were along a gentle arc (not a straight line), settling without overshoot.
+const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'; // settle curve, no overshoot
+// Values glide from where they were, settling without overshoot.
 function slideFrom(el, key, x, y) {
   const prev = memo.get(key);
   memo.set(key, { x, y });
@@ -42,27 +42,28 @@ function tooltipLayer(wrap) {
 // Upload timeline: one dot per long-form upload (7-day views), split at the connection boundary.
 export function timelineChart({ videos, range, highlight, baseline, width, height = 240, onSelect, selectedId, key = 'timeline' }) {
   const W = Math.max(300, width); const H = height;
-  const m = { l: 46, r: 14, t: 34, b: 30 };
+  const m = { l: 46, r: 14, t: 42, b: 30 };
   const iw = W - m.l - m.r; const ih = H - m.t - m.b;
   const t0 = toMs(range.start); const t1 = toMs(range.end);
   const x = (iso) => m.l + ((toMs(iso) - t0) / (t1 - t0)) * iw;
   const vmax = niceMax(Math.max(...videos.map((v) => v.views7 || 0), 10000) * 1.08);
   const y = (val) => m.t + ih - (val / vmax) * ih;
   const wrap = h('div', { class: 'chart chart-timeline' });
-  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Upload timeline: 7-day views per long-form upload, split into historical estimate and observed by Merlark.' });
+  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Upload timeline: first-week views per long video, split at the day you connected into historical estimate and observed by Merlark.' });
   const bx = toMs(CONNECTED_AT) >= t0 ? x(CONNECTED_AT) : null;
 
   if (bx != null) {
     svg.append(
       h('rect', { x: m.l, y: m.t, width: bx - m.l, height: ih, class: 'zone-hist' }),
       h('rect', { x: bx, y: m.t, width: W - m.r - bx, height: ih, class: 'zone-obs' }),
-      h('line', { x1: bx, x2: bx, y1: m.t - 18, y2: m.t + ih, class: 'boundary' }),
-      bx - m.l > 130 ? h('text', { x: bx - 8, y: m.t - 8, 'text-anchor': 'end', class: 'zone-label hist' }, '◂ Historical estimate') : null, // only when the zone has room
-      h('text', { x: bx + 8, y: m.t - 8, class: 'zone-label obs' }, 'Observed by Merlark ▸'),
+      h('line', { x1: bx, x2: bx, y1: m.t - 22, y2: m.t + ih, class: 'boundary' }),
+      h('text', { x: bx, y: m.t - 26, 'text-anchor': bx > W - 90 ? 'end' : bx < m.l + 90 ? 'start' : 'middle', class: 'boundary-label' }, 'You connected here'),
+      bx - m.l > 150 ? h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label hist' }, 'Historical estimate') : null, // only when the zone has room
+      W - m.r - bx > 140 ? h('text', { x: W - m.r - 8, y: m.t + 16, 'text-anchor': 'end', class: 'zone-label obs' }, 'Observed by Merlark') : null,
     );
   } else {
     svg.append(h('rect', { x: m.l, y: m.t, width: iw, height: ih, class: 'zone-obs' }),
-      h('text', { x: m.l + 6, y: m.t - 8, class: 'zone-label obs' }, 'Observed by Merlark'));
+      h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label obs' }, 'Observed by Merlark'));
   }
   for (let i = 0; i <= 4; i++) {
     const val = (vmax / 4) * i; const yy = y(val);
@@ -83,7 +84,7 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
     const bl = h('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: 'baseline-line' });
     slideFrom(bl, `${key}:baseline`, 0, yy);
     svg.append(bl,
-      h('text', { x: m.l + 6, y: yy + 14, class: 'axis baseline-label' }, `baseline ${formatInt(baseline)}`));
+      h('text', { x: m.l + 6, y: yy + 14, class: 'axis baseline-label' }, `your usual ${formatInt(baseline)}`));
   }
   const tip = tooltipLayer(wrap);
   videos.forEach((v, i) => {
@@ -100,7 +101,7 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
     h('circle', { cx, cy, r: hi ? 6 : 4.5 }));
     g.dataset.id = v.id;
     if (slideFrom(g, `${key}:${v.id}`, cx, cy)) g.classList.add('moved');
-    const show = () => tip.show(cx, cy - 14, [v.title, `${formatShort(v.date)} · ${formatInt(v.views7)} views in 7 days`, prov === 'historical' ? 'Historical estimate' : 'Observed by Merlark']);
+    const show = () => tip.show(cx, cy - 14, [v.title, `${formatShort(v.date)} · ${formatInt(v.views7)} views in week one`, prov === 'historical' ? 'Historical estimate' : 'Observed by Merlark']);
     g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
     g.addEventListener('pointerleave', tip.hide); g.addEventListener('blur', tip.hide);
     if (onSelect) {
@@ -127,7 +128,7 @@ export function barChart({ rows, max, width, key = null }) {
     svg.append(
       h('text', { x: 0, y: yy + 15, class: 'bar-label' }, h('title', null, r.label), r.label.length > maxChars ? r.label.slice(0, maxChars - 1).trimEnd() + '…' : r.label),
       r.note ? h('text', { x: 0, y: yy + 31, class: 'bar-note' }, r.note) : null,
-      h('rect', { x: labelW, y: yy + 4, width: W - labelW - 70, height: 16, rx: 8, class: 'bar-track' }),
+      h('rect', { x: labelW, y: yy + 4, width: W - labelW - 70, height: 16, rx: 9, class: 'bar-track' }),
       barRect(key ? `${key}:${r.id ?? r.label}` : null, labelW, yy + 4, bw, r.tone, i),
       h('text', { x: labelW + bw + 8, y: yy + 17, class: 'bar-value num' }, r.display),
     );
@@ -138,7 +139,7 @@ export function barChart({ rows, max, width, key = null }) {
 function barRect(k, x, y, w, tone, i) {
   const prev = k ? memo.get(k) : null;
   if (k) memo.set(k, { w });
-  const rect = h('rect', { x, y, width: w, height: 16, rx: 8, class: `bar ${tone || ''} ${prev ? 'moved' : ''}`, style: { '--i': i } });
+  const rect = h('rect', { x, y, width: w, height: 18, rx: 9, class: `bar ${tone || ''} ${prev ? 'moved' : ''}`, style: { '--i': i } });
   // From the previous value to the new one, so a comparison change reads as a change.
   if (prev && !reducedMotion() && Math.abs(prev.w - w) > 0.5) rect.animate([{ transform: `scaleX(${prev.w / w})` }, { transform: 'none' }], { duration: 640, easing: EASE });
   return rect;
@@ -151,7 +152,7 @@ export function retentionChart({ curves, duration, markers = [], playhead = null
   const iw = W - m.l - m.r; const ih = H - m.t - m.b;
   const x = (t) => m.l + (t / duration) * iw;
   const y = (r) => m.t + ih - (r / 100) * ih;
-  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, class: 'chart chart-retention', role: 'img', 'aria-label': 'Audience retention curve, synthetic sample data' });
+  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, class: 'chart chart-retention', role: 'img', 'aria-label': 'How many viewers kept watching, made-up sample data' });
   [0, 25, 50, 75, 100].forEach((r) => svg.append(
     h('line', { x1: m.l, x2: W - m.r, y1: y(r), y2: y(r), class: 'grid' }),
     h('text', { x: m.l - 8, y: y(r) + 4, 'text-anchor': 'end', class: 'axis' }, `${r}%`)));

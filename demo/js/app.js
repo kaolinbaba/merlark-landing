@@ -2,10 +2,9 @@
 // Shell, navigation and hash router for the Merlark interactive demo.
 // Hash routes (#/findings/F1) keep every screen refresh-safe on static hosting.
 
-import { h, icon, symbol, wordmark, mount, reducedMotion } from './ui/dom.js';
+import { h, icon, symbol, mount, reducedMotion } from './ui/dom.js';
 import { closeAll, dialog } from './ui/overlay.js';
 import { initMotionPreference, motionToggle } from './ui/motion.js';
-import { mountAtmosphere } from './ui/ribbons.js';
 import { getState, setState, subscribe } from './state.js';
 import { RANGES, getRange, LAST_CHECK, formatDate } from './data/derive.js';
 import { channel } from './data/fixtures.js';
@@ -20,38 +19,39 @@ import * as script from './views/script.js';
 import * as settings from './views/settings.js';
 import * as onboarding from './views/onboarding.js';
 
+// The rail: rounded icon buttons with short labels. Groups are separated by a small gap.
 const NAV = [
-  { group: 'Observe', items: [
+  { group: 'See', items: [
     { id: 'overview', label: 'Overview', icon: 'bridge', view: overview },
     { id: 'findings', label: 'Findings', icon: 'findings', view: findingsView },
-    { id: 'monitoring', label: 'Monitoring & backfill', icon: 'monitor', view: monitoring },
-    { id: 'videos', label: 'Video library', icon: 'videos', view: videosView },
+    { id: 'monitoring', label: 'Monitoring', icon: 'monitor', view: monitoring },
+    { id: 'videos', label: 'Videos', icon: 'videos', view: videosView },
   ] },
   { group: 'Decide', items: [
     { id: 'compare', label: 'Compare', icon: 'compare', view: compare },
-    { id: 'brief', label: 'Weekly brief', icon: 'brief', view: brief },
+    { id: 'brief', label: 'Brief', icon: 'brief', view: brief },
   ] },
-  { group: 'Act', items: [
-    { id: 'interventions', label: 'Interventions', icon: 'interventions', view: interventions },
-    { id: 'script', label: 'Script workspace', icon: 'script', view: script },
+  { group: 'Try', items: [
+    { id: 'experiments', label: 'Experiments', icon: 'interventions', view: interventions },
+    { id: 'script', label: 'Script', icon: 'script', view: script },
   ] },
   { group: 'Channel', items: [
-    { id: 'settings', label: 'Settings & plan', icon: 'settings', view: settings },
+    { id: 'settings', label: 'Settings', icon: 'settings', view: settings },
   ] },
 ];
 const ROUTES = Object.fromEntries(NAV.flatMap((g) => g.items).map((i) => [i.id, i]));
-ROUTES.onboarding = { id: 'onboarding', label: 'Onboarding', view: onboarding, bare: true };
+ROUTES.onboarding = { id: 'onboarding', label: 'Getting started', view: onboarding, bare: true };
+const ALIASES = { interventions: 'experiments' }; // older links keep working
 
 initMotionPreference();
-document.documentElement.classList.add('app-atmos');
-mountAtmosphere({ intensity: 0.55 }); // the same night light as the landing, further back behind working surfaces
 const app = document.getElementById('app');
 let current = { key: null };
 
 function parseHash() {
   const raw = location.hash.replace(/^#\/?/, '');
   const [path, query = ''] = raw.split('?');
-  const [route = 'overview', ...rest] = path.split('/').filter(Boolean);
+  let [route = 'overview', ...rest] = path.split('/').filter(Boolean);
+  route = ALIASES[route] || route;
   return { route: ROUTES[route] ? route : 'overview', params: rest, query: new URLSearchParams(query), known: !route || !!ROUTES[route] };
 }
 
@@ -60,15 +60,15 @@ export const navigate = (hash) => { if (location.hash === hash) render(); else l
 function aboutDemo() {
   dialog({
     label: 'About this demo',
-    title: 'Interactive demo · Sample data',
+    title: 'A pretend channel to play with',
     body: h('div', { class: 'prose' },
-      h('p', null, `Everything here belongs to a fictional channel, ${channel.name}. The videos, numbers and findings are synthetic and consistent across every screen.`),
-      h('p', null, 'Nothing you do here contacts Google or YouTube, charges a card, deletes data or calls an AI model. Your clicks are remembered only in this browser so a refresh keeps your place.'),
-      h('h3', null, 'What is real today'),
-      h('p', null, 'Merlark is in private testing. Google sign-in with read-only YouTube access, reading channel data through the official YouTube APIs, automatic deletion of stored YouTube statistics within 30 days, and disconnect-deletes-data are built. The findings, brief, comparisons, interventions, script workspace and billing screens are feature previews.'),
-      h('h3', null, 'What depends on approval'),
-      h('p', null, 'Long-horizon baselines, finding states and comparisons are derived metrics. YouTube’s developer policies allow them only after an API audit. Merlark has not received that approval, and today it keeps YouTube statistics for no more than 30 days. The months of history shown here illustrate the design, not current capability.'),
-      h('p', { class: 'dim' }, 'Merlark is not affiliated with or endorsed by YouTube or Google. It does not estimate monetization status or predict YouTube decisions.')),
+      h('p', null, `Everything here belongs to a made-up channel, ${channel.name}. The videos, numbers and findings are sample data, and they agree across every screen.`),
+      h('p', null, 'Nothing you do here contacts Google or YouTube, charges a card, deletes anything or calls an AI model. Your clicks are saved only in this browser, so a refresh keeps your place.'),
+      h('h3', null, 'What’s real today'),
+      h('p', null, 'Merlark is in private testing. Read-only Google sign-in, reading channel data through the official YouTube APIs, deleting stored YouTube statistics within 30 days, and deleting data when you disconnect all work. Findings, the brief, comparisons, experiments, the script workspace and billing are previews.'),
+      h('h3', null, 'What still needs approval'),
+      h('p', null, 'Long histories, finding states and comparisons count as derived metrics. YouTube’s developer policies allow them only after an API audit. Merlark hasn’t received that approval, and today it keeps YouTube statistics for 30 days at most. The months of history here show the idea, not what runs today.'),
+      h('p', { class: 'dim' }, 'Merlark isn’t affiliated with or endorsed by YouTube or Google. It doesn’t estimate monetization status or predict YouTube decisions.')),
     actions: [{ label: 'Got it', variant: 'btn-primary' }],
   });
 }
@@ -79,29 +79,27 @@ function rangeSelect(state) {
       RANGES.map((r) => h('option', { value: r.id, selected: r.id === state.range }, r.label))));
 }
 
-function statusLight(state) {
-  const s = !state.connected ? ['off', 'Not connected'] : state.simulateError ? ['err', 'Check failed'] : state.monitoringPaused ? ['paused', 'Monitoring paused'] : ['on', 'Monitoring'];
-  return h('a', { class: `status-light ${s[0]}`, href: '#/monitoring', title: `Last check ${formatDate(LAST_CHECK.date)} ${LAST_CHECK.time}` },
-    h('i', { 'aria-hidden': 'true' }), h('span', null, s[1]));
+// The "Watching" strip: the lamp is coral while monitoring is on.
+function watchStrip(state) {
+  const s = !state.connected ? ['off', 'Not connected'] : state.simulateError ? ['err', 'Check failed'] : state.monitoringPaused ? ['off', 'Paused'] : ['on', 'Watching'];
+  return h('a', { class: `watch-strip s-${s[0]}`, href: '#/monitoring', title: `Last check ${formatDate(LAST_CHECK.date)} ${LAST_CHECK.time}` },
+    h('i', { class: `watch-lamp ${s[0] === 'on' ? '' : 'off'}`, 'aria-hidden': 'true' }),
+    h('span', null, h('b', null, s[1]), h('span', { class: 'ws-chan' }, ` · ${channel.name}`)));
 }
 
 function shell(route, content, state) {
-  const nav = h('nav', { class: 'side', 'aria-label': 'Demo sections' },
-    h('a', { class: 'logo side-logo', href: '../', 'aria-label': 'Merlark home' }, symbol(26), wordmark(18)),
-    h('div', { class: 'chan' }, h('span', { class: 'chan-dot', 'aria-hidden': 'true' }, 'LH'),
-      h('span', null, h('strong', null, channel.name), h('small', { class: 'dim' }, `${channel.handle} · fictional`))),
-    NAV.map((g) => h('div', { class: 'nav-group' }, h('span', { class: 'nav-label' }, g.group),
-      g.items.map((i) => h('a', { href: `#/${i.id}`, class: `nav-item ${route === i.id ? 'active' : ''}`, 'aria-current': route === i.id ? 'page' : null, onclick: () => document.body.classList.remove('nav-open') }, icon(i.icon), h('span', null, i.label))))),
-    h('div', { class: 'side-foot' },
-      motionToggle(),
-      h('a', { class: 'btn btn-ghost btn-sm', href: '#/onboarding' }, 'Replay onboarding'),
-      h('a', { class: 'btn btn-quiet btn-sm', href: '../' }, icon('back', 14), 'Back to merlark.com')));
+  const nav = h('nav', { class: 'rail', 'aria-label': 'Demo sections' },
+    h('a', { class: 'rail-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(34)),
+    h('div', { class: 'rail-items' }, NAV.map((g) => h('div', { class: 'rail-group', role: 'group', 'aria-label': g.group },
+      g.items.map((i) => h('a', { href: `#/${i.id}`, class: `rail-btn ${route === i.id ? 'on' : ''}`, 'aria-current': route === i.id ? 'page' : null },
+        h('span', { class: 'rail-ico' }, icon(i.icon, 20)), h('span', { class: 'rail-label' }, i.label)))))));
   const top = h('header', { class: 'topbar' },
-    h('button', { class: 'btn btn-quiet icon-btn menu-btn', 'aria-label': 'Open navigation', onclick: () => document.body.classList.toggle('nav-open') }, icon('menu')),
-    h('a', { class: 'logo top-logo', href: '#/overview', 'aria-label': 'Overview' }, symbol(24)),
-    h('button', { class: 'demo-pill', onclick: aboutDemo, 'aria-label': 'Interactive demo, sample data. About this demo' }, h('i', { 'aria-hidden': 'true' }), 'Interactive demo · Sample data'),
-    h('div', { class: 'top-right' }, statusLight(state), rangeSelect(state)));
-  return h('div', { class: 'shell' }, nav, h('div', { class: 'nav-scrim', onclick: () => document.body.classList.remove('nav-open') }),
+    h('a', { class: 'top-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(28)),
+    watchStrip(state),
+    h('div', { class: 'top-right' },
+      h('button', { class: 'chip demo-pill', type: 'button', onclick: aboutDemo, 'aria-label': 'Sample data, made-up channel. About this demo' }, icon('info', 14), 'Sample data · made-up channel'),
+      rangeSelect(state), motionToggle()));
+  return h('div', { class: 'shell' }, nav,
     h('div', { class: 'main-col' }, top, h('main', { id: 'main', class: 'main', tabindex: -1 }, content)));
 }
 
@@ -120,18 +118,24 @@ function render() {
   let content;
   try {
     content = def.view.render({ params, query }, ctx(state));
-    if (!known) content = h('div', null, h('div', { class: 'notice' }, 'That page does not exist in the demo, so you are on the Overview.'), content);
+    if (!known) content = h('div', null, h('div', { class: 'notice' }, 'That page isn’t in the demo, so here’s the Overview.'), content);
   } catch (err) {
     console.error(err);
-    content = h('div', { class: 'error-state' }, h('h2', null, 'This panel failed to load'), h('p', { class: 'muted' }, 'Something went wrong while drawing sample data.'),
+    content = h('div', { class: 'error-state' }, h('h2', null, 'This panel didn’t load'), h('p', { class: 'muted' }, 'Something went wrong while drawing the sample data.'),
       h('button', { class: 'btn btn-primary', onclick: render }, 'Try again'));
   }
-  if (def.bare) { mount(app, content); return; }
+  if (def.bare) {
+    mount(app, content);
+    if (routeChanged) { const m = app.querySelector('#main'); if (m) m.focus({ preventScroll: true }); window.scrollTo(0, 0); }
+    document.title = `${def.label} · Merlark demo`;
+    return;
+  }
   const scrollY = routeChanged ? 0 : window.scrollY;
-  // Navigation is immediate; the dock-in entrance plays on the new content without delaying it.
+  // Navigation is immediate; panels pop in on the new screen without delaying it.
   mount(app, shell(route, content, state));
   if (routeChanged) {
     if (!reducedMotion()) app.querySelector('.main').classList.add('enter');
+    const on = app.querySelector('.rail-btn.on'); if (on && on.scrollIntoView && window.innerWidth < 1024) on.scrollIntoView({ block: 'nearest', inline: 'center' });
     app.querySelector('#main').focus({ preventScroll: true });
   }
   window.scrollTo(0, scrollY);
@@ -140,14 +144,14 @@ function render() {
 
 function welcome() {
   dialog({
-    label: 'Welcome aboard',
-    title: 'Welcome to the Merlark demo',
-    body: h('div', { class: 'welcome' }, h('div', { class: 'welcome-orbit', 'aria-hidden': 'true' }, symbol(64, false)),
-      h('p', null, `This is Merlark with sample data from a fictional channel, ${channel.name}. Run the one-minute onboarding to see how a channel is connected and its history reconstructed, or go straight to the overview.`),
+    label: 'Welcome',
+    title: 'Take Merlark for a spin',
+    body: h('div', { class: 'welcome' }, h('div', { class: 'welcome-mark', 'aria-hidden': 'true' }, symbol(64, false)),
+      h('p', null, `This is Merlark with a made-up channel, ${channel.name}. Watch it connect in about a minute, or jump straight in.`),
       h('p', { class: 'dim' }, 'Nothing here contacts Google, charges anything or calls an AI model.')),
     actions: [
-      { label: 'Skip to the overview', onClick: () => setState({ onboarded: true }) },
-      { label: 'Start onboarding', variant: 'btn-primary', onClick: () => { setState({ onboarded: true }); navigate('#/onboarding'); } },
+      { label: 'Jump straight in', onClick: () => setState({ onboarded: true }) },
+      { label: 'Show me the setup', variant: 'btn-primary', onClick: () => { setState({ onboarded: true }); navigate('#/onboarding'); } },
     ],
   });
 }
@@ -162,5 +166,6 @@ document.addEventListener('click', (e) => { if (e.target.closest('[data-close-ov
 subscribe(() => render());
 
 render();
-if (!getState().onboarded && parseHash().route !== 'onboarding') welcome();
+// ?skipwelcome opens the demo without the welcome card (used for direct links and screenshots).
+if (!getState().onboarded && parseHash().route !== 'onboarding' && !new URLSearchParams(location.search).has('skipwelcome')) welcome();
 document.documentElement.classList.add('ready');
