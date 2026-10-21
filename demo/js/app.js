@@ -5,6 +5,7 @@
 import { h, icon, symbol, wordmark, mount, reducedMotion } from './ui/dom.js';
 import { closeAll, dialog } from './ui/overlay.js';
 import { initMotionPreference, motionToggle } from './ui/motion.js';
+import { mountFlowField } from './ui/flow.js';
 import { getState, setState, subscribe } from './state.js';
 import { RANGES, getRange, LAST_CHECK, formatDate } from './data/derive.js';
 import { channel } from './data/fixtures.js';
@@ -42,6 +43,7 @@ const ROUTES = Object.fromEntries(NAV.flatMap((g) => g.items).map((i) => [i.id, 
 ROUTES.onboarding = { id: 'onboarding', label: 'Onboarding', view: onboarding, bare: true };
 
 initMotionPreference();
+mountFlowField({ density: 0.55, calmSelector: '.main, .ob-card' }); // quieter behind the working area
 const app = document.getElementById('app');
 let current = { key: null };
 

@@ -38,11 +38,11 @@
 .demo-pill.static { cursor: default; }
 .demo-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 .status-light { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-xs); color: var(--text-muted); text-decoration: none; white-space: nowrap; }
-.status-light i { width: 8px; height: 8px; border-radius: 50%; background: var(--state-working); box-shadow: 0 0 0 3px rgba(94,230,168,0.15), 0 0 10px var(--state-working); animation: pulse 2.4s ease-in-out infinite; }
+.status-light i { width: 8px; height: 8px; border-radius: 50%; background: var(--state-working); box-shadow: 0 0 0 3px rgba(94,230,168,0.15), 0 0 10px var(--state-working); animation: pulse 6.2s var(--ease-flow) infinite alternate; }
 .status-light.paused i { background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: none; }
 .status-light.err i { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
 .status-light.off i { background: var(--text-dim); box-shadow: none; animation: none; }
-@keyframes pulse { 50% { opacity: 0.45; } }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
 .range select {
   appearance: none; min-height: 36px; padding: 0 34px 0 12px; border-radius: var(--r-pill); background: var(--surface-2)
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3b2c9' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
@@ -51,8 +51,9 @@
 .range select option { background: var(--surface-1); color: var(--text); }
 
 .main { padding: var(--s8); max-width: 1240px; width: 100%; outline: none; }
-.main.enter > * { animation: dock var(--t-slow) var(--ease-out) both; }
-@keyframes dock { from { opacity: 0; transform: translateY(10px) scale(0.995); filter: blur(3px); } }
+.main.enter > * { animation: dock var(--t-panel) var(--ease-settle) both; }
+.main.enter > *:nth-child(2) { animation-delay: 40ms; } .main.enter > *:nth-child(n+3) { animation-delay: 80ms; }
+@keyframes dock { from { opacity: 0; transform: translateY(6px); } }
 .nav-scrim { display: none; }
 
 @media (max-width: 1023px) {

@@ -1,66 +1,58 @@
-/* assets/css/ambient.css — quiet analytical environment (level 1 motion) and section effects (level 2). */
-.ambient { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-  background-image: linear-gradient(rgba(54,226,208,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(54,226,208,0.045) 1px, transparent 1px);
+/* assets/css/ambient.css — environment and section effects, one motion language:
+   slow ease-in-out drifts that reverse (alternate) instead of snapping back, unrelated periods so
+   nothing pulses in sync, and opacity/transform only. */
+.ambient { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(rgba(54,226,208,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(54,226,208,0.04) 1px, transparent 1px);
   background-size: 64px 64px; mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 30%, transparent 85%); -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 30%, transparent 85%); }
-.ambient-svg { position: absolute; inset: 0; }
-.amb-path { fill: none; stroke: rgba(54,226,208,0.16); stroke-width: 1; stroke-dasharray: 2 6; animation: ambFlow 26s linear infinite; }
-.amb-path.p1 { stroke: rgba(168,155,255,0.14); animation-duration: 34s; }
-.amb-path.p2 { stroke: rgba(255,181,71,0.10); animation-duration: 40s; animation-direction: reverse; }
-@keyframes ambFlow { to { stroke-dashoffset: -100; } }
-.amb-node { fill: rgba(13,21,40,0.9); stroke: rgba(54,226,208,0.28); stroke-width: 1; }
-.amb-node.n1 { stroke: rgba(168,155,255,0.28); } .amb-node.n2 { stroke: rgba(159,176,201,0.22); }
-.amb-wave { fill: none; stroke: rgba(54,226,208,0.14); stroke-width: 1.2; animation: ambDrift 18s ease-in-out infinite alternate; }
-.amb-wave.w2 { stroke: rgba(168,155,255,0.12); animation-duration: 24s; }
-@keyframes ambDrift { to { transform: translate(-24px, 10px); } }
-.amb-trace { fill: none; stroke: rgba(54,226,208,0.45); stroke-width: 1.2; stroke-dasharray: 100; stroke-dashoffset: 100; animation: ambTrace 3.2s ease-in-out forwards; filter: drop-shadow(0 0 4px rgba(54,226,208,0.6)); }
-@keyframes ambTrace { 45% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-.ambient-glows { position: absolute; inset: 0; }
-.amb-glow { position: absolute; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; background: radial-gradient(circle, rgba(54,226,208,0.22), transparent 65%); animation: ambGlow 1.6s ease-out forwards; }
-@keyframes ambGlow { from { opacity: 0; transform: scale(0.4); } 30% { opacity: 1; } to { opacity: 0; transform: scale(1.1); } }
+.flow-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
-/* Section effects run only while their section is visible (.live). */
 .fx { display: block; width: 120px; height: 64px; overflow: visible; }
 .fx * { vector-effect: non-scaling-stroke; }
 .fx .grid-lines path, .fx .tl { stroke: var(--line); fill: none; }
-.fx circle { fill: var(--text-dim); }
-.fx-sweep .sweep { stroke: var(--accent); stroke-width: 1.5; filter: drop-shadow(0 0 4px var(--accent)); }
-.live .fx-sweep .sweep { animation: fxSweep 3.6s linear infinite; }
-.live .fx-sweep .pts circle { animation: fxPing 3.6s linear infinite; }
-.fx-sweep .pts circle:nth-child(2) { animation-delay: 0.6s; } .fx-sweep .pts circle:nth-child(3) { animation-delay: 1.2s; } .fx-sweep .pts circle:nth-child(4) { animation-delay: 1.8s; } .fx-sweep .pts circle:nth-child(5) { animation-delay: 2.4s; }
-@keyframes fxSweep { from { transform: translateX(0); } to { transform: translateX(120px); } }
-@keyframes fxPing { 0%, 8% { fill: var(--text-dim); } 12% { fill: var(--accent); r: 4; } 40%, 100% { fill: var(--accent); r: 2.5; } }
-.fx-resolve .line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; }
-.live .fx-resolve .pts circle { animation: fxGather 4.2s var(--ease-out) infinite; }
-.live .fx-resolve .line { animation: fxDraw 4.2s var(--ease-out) infinite; }
-.fx-resolve .pts circle:nth-child(1) { --tx: 0px; --ty: 30px; } .fx-resolve .pts circle:nth-child(2) { --tx: -4px; --ty: 8px; } .fx-resolve .pts circle:nth-child(3) { --tx: 12px; --ty: -16px; } .fx-resolve .pts circle:nth-child(4) { --tx: -12px; --ty: -30px; } .fx-resolve .pts circle:nth-child(5) { --tx: 6px; --ty: 24px; }
-@keyframes fxGather { 0%, 15% { transform: none; fill: var(--text-dim); } 50%, 80% { transform: translate(var(--tx), var(--ty)); fill: var(--accent); } 100% { transform: translate(var(--tx), var(--ty)); opacity: 0; } }
-@keyframes fxDraw { 0%, 45% { stroke-dashoffset: 1; opacity: 0; } 70%, 88% { stroke-dashoffset: 0; opacity: 1; } 100% { opacity: 0; } }
-.fx-focus .frame { fill: var(--surface-2); stroke: var(--line-strong); transition: opacity 400ms; }
+.fx circle { fill: var(--text-dim); transition: fill 1.2s var(--ease-flow); }
+/* Monitoring: a soft sweep glides back and forth; points it passes warm gently. */
+.fx-sweep .sweep { stroke: var(--accent); stroke-width: 1.5; filter: drop-shadow(0 0 5px var(--accent)); opacity: 0.85; }
+.live .fx-sweep .sweep { animation: fxSweep 7.3s var(--ease-flow) infinite alternate; }
+.live .fx-sweep .pts circle { animation: fxWarm 7.3s ease-in-out infinite alternate; }
+.fx-sweep .pts circle:nth-child(2) { animation-delay: -1.3s; } .fx-sweep .pts circle:nth-child(3) { animation-delay: -2.9s; } .fx-sweep .pts circle:nth-child(4) { animation-delay: -4.1s; } .fx-sweep .pts circle:nth-child(5) { animation-delay: -5.6s; }
+@keyframes fxSweep { from { transform: translateX(4px); } to { transform: translateX(116px); } }
+@keyframes fxWarm { 0%, 30% { fill: var(--text-dim); } 60%, 100% { fill: var(--accent); } }
+/* Findings: scattered points drift into a line and back apart. */
+.fx-resolve .line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 0.6; opacity: 0.4; }
+.live .fx-resolve .pts circle { animation: fxGather 9.1s var(--ease-flow) infinite alternate; }
+.live .fx-resolve .line { animation: fxDraw 9.1s var(--ease-flow) infinite alternate; }
+.fx-resolve .pts circle:nth-child(1) { --tx: 0px; --ty: 30px; } .fx-resolve .pts circle:nth-child(2) { --tx: -4px; --ty: 8px; animation-delay: -0.4s; } .fx-resolve .pts circle:nth-child(3) { --tx: 12px; --ty: -16px; animation-delay: -0.9s; } .fx-resolve .pts circle:nth-child(4) { --tx: -12px; --ty: -30px; animation-delay: -0.2s; } .fx-resolve .pts circle:nth-child(5) { --tx: 6px; --ty: 24px; animation-delay: -1.2s; }
+@keyframes fxGather { 0%, 12% { transform: none; fill: var(--text-dim); } 75%, 100% { transform: translate(var(--tx), var(--ty)); fill: var(--accent); } }
+@keyframes fxDraw { 0%, 30% { stroke-dashoffset: 1; opacity: 0.15; } 85%, 100% { stroke-dashoffset: 0; opacity: 1; } }
+/* Evidence: the surrounding sources dim while the reticle softly settles on one. */
+.fx-focus .frame { fill: var(--surface-2); stroke: var(--line-strong); }
 .fx-focus .target { stroke: var(--amber); }
 .fx-focus .reticle { fill: none; stroke: var(--amber); stroke-width: 1.5; transform-origin: 60px 43px; }
-.live .fx-focus .reticle { animation: fxFocus 3.8s var(--ease-out) infinite; }
-.live .fx-focus .frame:not(.target) { animation: fxDim 3.8s ease infinite; }
-@keyframes fxFocus { 0% { transform: scale(2); opacity: 0; } 40%, 85% { transform: scale(1); opacity: 1; } 100% { opacity: 0; } }
-@keyframes fxDim { 0%, 30% { opacity: 1; } 50%, 85% { opacity: 0.35; } 100% { opacity: 1; } }
+.fx-focus .reticle circle { fill: none; }
+.live .fx-focus .reticle { animation: fxFocus 8.7s var(--ease-flow) infinite alternate; }
+.live .fx-focus .frame:not(.target) { animation: fxDim 8.7s ease-in-out infinite alternate; }
+@keyframes fxFocus { 0%, 10% { transform: scale(1.7); opacity: 0.25; } 70%, 100% { transform: scale(1); opacity: 1; } }
+@keyframes fxDim { 0%, 20% { opacity: 1; } 75%, 100% { opacity: 0.4; } }
+/* Comparison: the series eases toward the baseline and away again. */
 .fx-align .base { stroke: var(--amber); stroke-dasharray: 3 4; }
-.fx-align .a, .fx-align .b { fill: none; stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.fx-align .a, .fx-align .b { fill: none; stroke-width: 2; }
 .fx-align .a { stroke: var(--accent); } .fx-align .b { stroke: var(--state-neutral); opacity: 0.7; }
-.live .fx-align .a { animation: fxDraw2 4.4s var(--ease-out) infinite; } .live .fx-align .b { animation: fxDraw2 4.4s var(--ease-out) infinite 0.4s; }
-@keyframes fxDraw2 { 0% { stroke-dashoffset: 1; } 50%, 90% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0.2; } }
-.fx-join .new { fill: var(--accent); } .fx-join .ring { fill: none; stroke: var(--accent); opacity: 0; }
-.live .fx-join .new { animation: fxJoin 4s var(--ease-out) infinite; } .live .fx-join .ring { animation: fxRing 4s ease-out infinite; }
-@keyframes fxJoin { 0%, 20% { transform: translate(14px, -14px); opacity: 0; } 45%, 90% { transform: none; opacity: 1; } 100% { opacity: 0; } }
-@keyframes fxRing { 0%, 42% { opacity: 0; transform: scale(0.4); } 55% { opacity: 0.9; } 85%, 100% { opacity: 0; transform: scale(1.6); } }
+.live .fx-align .a { animation: fxAlign 10.3s var(--ease-flow) infinite alternate; transform-origin: 60px 40px; }
+.live .fx-align .b { animation: fxAlignB 12.1s var(--ease-flow) infinite alternate; transform-origin: 60px 40px; }
+@keyframes fxAlign { from { transform: scaleY(1); } to { transform: scaleY(0.45); } }
+@keyframes fxAlignB { from { transform: scaleY(0.6); } to { transform: scaleY(1.1); } }
+/* Outcomes: a new reading drifts into the timeline and settles with a slow halo. */
+.fx-join .new { fill: var(--accent); } .fx-join .ring { fill: none; stroke: var(--accent); }
+.live .fx-join .new { animation: fxJoin 11.7s var(--ease-flow) infinite alternate; }
+.live .fx-join .ring { animation: fxRing 11.7s ease-in-out infinite alternate; }
+@keyframes fxJoin { 0%, 15% { transform: translate(16px, -14px); opacity: 0.2; } 70%, 100% { transform: none; opacity: 1; } }
+@keyframes fxRing { 0%, 55% { opacity: 0; transform: scale(0.5); } 100% { opacity: 0.6; transform: scale(1.4); } }
 .fx-join .ring, .fx-join .new { transform-box: fill-box; transform-origin: center; }
 
-/* Paused when the tab is hidden, static when motion is off. */
-.tab-hidden .ambient *, .tab-hidden .fx *, .tab-hidden .stage-orbits * { animation-play-state: paused !important; }
-.motion-off .ambient *, .motion-off .fx *, .motion-off .stage-orbits *, .motion-off .starfield::before, .motion-off .starfield::after { animation: none !important; }
-.motion-off .fx-resolve .line, .motion-off .fx-align .a, .motion-off .fx-align .b { stroke-dashoffset: 0; opacity: 1; }
-.motion-off .fx-focus .reticle { opacity: 1; }
+.tab-hidden .fx *, .tab-hidden .stage-orbits * { animation-play-state: paused !important; }
+.motion-off .fx *, .motion-off .stage-orbits *, .motion-off .starfield::before, .motion-off .starfield::after { animation: none !important; }
+.motion-off .fx-resolve .line { stroke-dashoffset: 0; opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  .ambient *, .fx * { animation: none !important; }
-  .fx-resolve .line, .fx-align .a, .fx-align .b { stroke-dashoffset: 0; opacity: 1; }
+  .fx * { animation: none !important; }
+  .fx-resolve .line { stroke-dashoffset: 0; opacity: 1; }
 }
-@media (max-width: 700px) { .amb-path { animation-duration: 60s; } }
-.fx-focus .reticle circle { fill: none; }

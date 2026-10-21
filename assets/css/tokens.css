@@ -72,8 +72,14 @@
   --t-fast: 140ms;
   --t-med: 260ms;
   --t-slow: 520ms;
+  /* Shared motion language (flow.js mirrors these): press · panel · analytical emphasis */
+  --t-press: 150ms;
+  --t-panel: 480ms;
+  --t-emph: 1000ms;
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);  /* critically damped feel, no overshoot */
+  --ease-flow: cubic-bezier(0.45, 0, 0.2, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root { --t-fast: 0ms; --t-med: 0ms; --t-slow: 0ms; }
+  :root { --t-fast: 0ms; --t-med: 0ms; --t-slow: 0ms; --t-panel: 0ms; --t-emph: 0ms; }
 }

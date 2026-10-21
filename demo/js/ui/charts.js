@@ -5,12 +5,18 @@ import { h, reducedMotion } from './dom.js';
 
 // Last drawn positions per chart key, so a re-render (e.g. a date-range change) animates from old to new values.
 const memo = new Map();
-const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'; // shared settle curve (flow.js / tokens.css)
+// Values glide from where they were along a gentle arc (not a straight line), settling without overshoot.
 function slideFrom(el, key, x, y) {
   const prev = memo.get(key);
   memo.set(key, { x, y });
   if (!prev || reducedMotion() || (Math.abs(prev.x - x) < 0.5 && Math.abs(prev.y - y) < 0.5)) return false;
-  el.animate([{ transform: `translate(${prev.x - x}px, ${prev.y - y}px)` }, { transform: 'none' }], { duration: 520, easing: EASE });
+  const dx = prev.x - x; const dy = prev.y - y; const bend = Math.min(18, Math.hypot(dx, dy) * 0.18);
+  el.animate([
+    { transform: `translate(${dx}px, ${dy}px)` },
+    { transform: `translate(${dx * 0.42}px, ${dy * 0.42 - bend}px)`, offset: 0.45 },
+    { transform: 'none' },
+  ], { duration: 720, easing: EASE });
   return true;
 }
 import { toMs, formatShort, formatInt, formatTime, provenanceOf, formatDate } from '../data/derive.js';
@@ -51,7 +57,7 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
       h('rect', { x: m.l, y: m.t, width: bx - m.l, height: ih, class: 'zone-hist' }),
       h('rect', { x: bx, y: m.t, width: W - m.r - bx, height: ih, class: 'zone-obs' }),
       h('line', { x1: bx, x2: bx, y1: m.t - 18, y2: m.t + ih, class: 'boundary' }),
-      h('text', { x: bx - 8, y: m.t - 8, 'text-anchor': 'end', class: 'zone-label hist' }, '◂ Historical estimate'),
+      bx - m.l > 130 ? h('text', { x: bx - 8, y: m.t - 8, 'text-anchor': 'end', class: 'zone-label hist' }, '◂ Historical estimate') : null, // only when the zone has room
       h('text', { x: bx + 8, y: m.t - 8, class: 'zone-label obs' }, 'Observed by Merlark ▸'),
     );
   } else {
@@ -134,7 +140,7 @@ function barRect(k, x, y, w, tone, i) {
   if (k) memo.set(k, { w });
   const rect = h('rect', { x, y, width: w, height: 16, rx: 8, class: `bar ${tone || ''} ${prev ? 'moved' : ''}`, style: { '--i': i } });
   // From the previous value to the new one, so a comparison change reads as a change.
-  if (prev && !reducedMotion() && Math.abs(prev.w - w) > 0.5) rect.animate([{ transform: `scaleX(${prev.w / w})` }, { transform: 'none' }], { duration: 560, easing: EASE });
+  if (prev && !reducedMotion() && Math.abs(prev.w - w) > 0.5) rect.animate([{ transform: `scaleX(${prev.w / w})` }, { transform: 'none' }], { duration: 640, easing: EASE });
   return rect;
 }
 

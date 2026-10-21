@@ -16,11 +16,11 @@ export function playFlip(before, selector, attr = 'data-key') {
   if (!before || reducedMotion()) return;
   document.querySelectorAll(selector).forEach((el) => {
     const prev = before.get(el.getAttribute(attr));
-    if (!prev) { el.animate([{ opacity: 0, transform: 'scale(0.97)' }, { opacity: 1, transform: 'none' }], { duration: 280, easing: 'cubic-bezier(0.22,1,0.36,1)' }); return; }
+    if (!prev) { el.animate([{ opacity: 0, transform: 'scale(0.97)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(0.16,1,0.3,1)' }); return; }
     const now = el.getBoundingClientRect();
     const dx = prev.left - now.left; const dy = prev.top - now.top;
     if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
-    el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 340, easing: 'cubic-bezier(0.22,1,0.36,1)' });
+    el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 520, easing: 'cubic-bezier(0.16,1,0.3,1)' });
   });
 }
 
@@ -30,6 +30,10 @@ export function initMotionPreference() {
   try { off = localStorage.getItem(KEY) === 'off'; } catch { /* ignore */ }
   document.documentElement.classList.toggle('motion-off', off);
   document.addEventListener('visibilitychange', () => document.documentElement.classList.toggle('tab-hidden', document.hidden));
+  // If the OS reduced-motion setting changes while the page is open, every animated layer re-syncs.
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const relay = () => document.dispatchEvent(new CustomEvent('merlark:motion', { detail: { off: mq.matches } }));
+  if (mq.addEventListener) mq.addEventListener('change', relay); else if (mq.addListener) mq.addListener(relay);
 }
 export function motionToggle(onChange) {
   const btn = h('button', { class: 'btn btn-quiet btn-sm motion-toggle', type: 'button' });

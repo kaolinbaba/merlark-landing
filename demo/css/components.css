@@ -106,10 +106,10 @@ button.chip { cursor: pointer; font-family: inherit; }
 body.has-overlay { overflow: hidden; }
 .dialog-root, .drawer-root { position: fixed; inset: 0; z-index: 100; display: flex; }
 .dialog-root { align-items: center; justify-content: center; padding: var(--s4); }
-.scrim { position: absolute; inset: 0; background: rgba(3,6,12,0.66); backdrop-filter: blur(4px); opacity: 0; transition: opacity var(--t-med); }
+.scrim { position: absolute; inset: 0; background: rgba(3,6,12,0.66); backdrop-filter: blur(4px); opacity: 0; transition: opacity var(--t-panel) var(--ease-flow); }
 .open .scrim { opacity: 1; } .closing .scrim { opacity: 0; }
 .dialog-panel, .drawer-panel { position: relative; display: flex; flex-direction: column; background: var(--surface-1); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2), 0 0 0 1px rgba(54,226,208,0.06); }
-.dialog-panel { width: min(560px, 100%); max-height: calc(100vh - 32px); border-radius: var(--r-lg); transform: translateY(12px) scale(0.98); opacity: 0; transition: transform var(--t-med) var(--ease-out), opacity var(--t-med); }
+.dialog-panel { width: min(560px, 100%); max-height: calc(100vh - 32px); border-radius: var(--r-lg); transform: translateY(10px) scale(0.985); opacity: 0; transition: transform var(--t-panel) var(--ease-settle), opacity 360ms var(--ease-flow); }
 .dialog-panel.wide { width: min(760px, 100%); }
 .open .dialog-panel { transform: none; opacity: 1; }
 .closing .dialog-panel { transform: translateY(8px) scale(0.98); opacity: 0; }
@@ -249,22 +249,28 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 /* Values that changed animate from where they were (charts.js); they skip the entrance animation. */
 .chart-timeline .dot.moved, .bar.moved { animation: none; }
 .dot.focus circle { r: 9; stroke: var(--amber); fill: var(--amber); filter: drop-shadow(0 0 8px var(--amber)); }
-.dot circle { transition: r var(--t-fast), fill var(--t-med), stroke var(--t-med); }
-.dot { transition: opacity var(--t-med); }
-.ev-list.illuminate .ev-row { animation: illum 900ms var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+.dot circle { transition: r 700ms var(--ease-settle), fill var(--t-emph) var(--ease-flow), stroke var(--t-emph) var(--ease-flow), filter var(--t-emph) var(--ease-flow); }
+.dot { transition: opacity 900ms var(--ease-flow); }
+.ev-list.illuminate .ev-row { animation: illum 1100ms var(--ease-settle) both; animation-delay: calc(var(--i) * 90ms); }
 @keyframes illum { from { opacity: 0; transform: translateX(-8px); border-color: rgba(54,226,208,0.7); box-shadow: 0 0 24px -8px var(--accent); } }
 .motion-off .ev-list.illuminate .ev-row { animation: none; }
 
 /* Playback: the active evidence window */
-.chip.jump.active { color: var(--accent-ink); background: var(--amber); border-color: var(--amber); box-shadow: 0 0 16px -4px var(--amber); }
-.vp-screen.in-seg .vp-reticle i:first-child { border-color: var(--amber); animation: reticleLock 600ms var(--ease-out); }
+.chip.jump { transition: background 700ms var(--ease-flow), color 700ms var(--ease-flow), box-shadow 900ms var(--ease-flow), border-color 700ms; }
+.chip.jump.active { color: var(--accent-ink); background: var(--amber); border-color: var(--amber); box-shadow: 0 0 18px -4px var(--amber); }
+.vp-screen { transition: box-shadow 900ms var(--ease-flow); }
+.vp-reticle i { transition: border-color 800ms var(--ease-flow), transform 800ms var(--ease-settle); }
+.vp-screen.in-seg .vp-reticle i:first-child { border-color: var(--amber); transform: scale(0.92); }
 @keyframes reticleLock { from { transform: scale(1.6); opacity: 0; } }
 
 /* Evidence drawer docks: slides in, settles with a short lock-on of its edge. */
-.drawer-panel { transform: translateX(104%) scale(0.98); transform-origin: right center; transition: transform 420ms var(--ease-dock), box-shadow 600ms; }
+.drawer-panel { transform: translateX(104%) scale(0.985); transform-origin: right center; transition: transform var(--t-panel) var(--ease-settle), box-shadow 900ms var(--ease-flow); }
 .open .drawer-panel { transform: none; box-shadow: var(--shadow-2), -1px 0 0 rgba(54,226,208,0.5), -30px 0 60px -40px var(--accent); }
-.open .drawer-panel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), transparent 30%, transparent 70%, var(--accent)); animation: dockEdge 900ms var(--ease-out) both 200ms; }
+.open .drawer-panel::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), transparent 30%, transparent 70%, var(--accent)); animation: dockEdge 1100ms var(--ease-settle) both 220ms; }
 @keyframes dockEdge { from { opacity: 0; transform: scaleY(0.2); } to { opacity: 0.8; } }
 .motion-off .drawer-panel, .motion-off .dialog-panel { transition: none; }
 .motion-off .open .drawer-panel::before, .motion-off .main.enter > *, .motion-off .chart-timeline .dot, .motion-off .bar, .motion-off .curve { animation: none !important; }
 .motion-off .curve { stroke-dashoffset: 0; }
+
+/* Demo flow field sits behind the shell; the working column keeps it quiet (flow.js calm zones). */
+.flow-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
