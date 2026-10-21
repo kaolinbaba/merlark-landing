@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" style="background:#070b16">
+<html lang="en" style="background:#080c0d">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#070b16">
+<meta name="theme-color" content="#080c0d">
 <title>Merlark interactive demo</title>
 <meta name="description" content="Explore Merlark with sample data from a fictional YouTube channel: monitoring, backfill, findings with evidence, comparisons, interventions and an evidence-grounded script workspace.">
 <meta name="robots" content="index,follow">
@@ -13,6 +13,8 @@
 <meta property="og:image" content="https://merlark.com/assets/brand/og-image.png">
 <meta property="og:url" content="https://merlark.com/demo/">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="../assets/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
@@ -21,18 +23,19 @@
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="../assets/css/base.css">
 <link rel="stylesheet" href="../assets/css/space.css">
+<link rel="stylesheet" href="../assets/css/atmosphere.css">
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/views.css">
 <link rel="stylesheet" href="css/boot.css">
+<link rel="stylesheet" href="css/studio.css">
 </head>
 <body>
-<div class="starfield" aria-hidden="true"></div>
 <a class="skip" href="#main">Skip to content</a>
 <div id="app">
   <div class="boot" role="status">
-    <svg width="56" height="56" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M54.07 20.26A25 25 0 1 1 39.73 8.22" stroke="#36e2d0" stroke-width="4.5" stroke-linecap="round"/><path d="M13.5 40C16.5 32.5 19.8 25 23.5 24.5C27.2 24 29.6 29.5 32 34.5C34.4 29.5 36.8 24 40.5 24.5C44.2 25 47.5 32.5 50.5 40" stroke="#e6edf7" stroke-width="5" stroke-linecap="round"/><circle class="boot-body" cx="48.07" cy="12.85" r="4.2" fill="#ffb547"/></svg>
-    <span>Initializing observatory…</span>
+    <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><path fill="#f3ebdc" d="M6 54C13 35 28 18 52 10C38 22 25 36 13 55Z"/><path fill="#f3ebdc" opacity=".74" d="M14 56C24 42 37 32 54 27C41 36 30 45 20 57Z"/><path fill="#f3ebdc" opacity=".5" d="M23 57C32 50 42 46 54 44C43 49 35 53 27 58Z"/><circle class="boot-body" cx="58" cy="7.5" r="4" fill="#d9a565"/></svg>
+    <span>Opening the sample channel…</span>
   </div>
 </div>
 <noscript><p class="noscript">The interactive demo needs JavaScript. <a href="../">Back to merlark.com</a></p></noscript>

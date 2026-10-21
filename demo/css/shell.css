@@ -2,7 +2,7 @@
 .shell { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
 .side {
   position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: var(--s4);
-  padding: var(--s5) var(--s4); background: linear-gradient(180deg, rgba(13,21,40,0.92), rgba(7,11,22,0.96));
+  padding: var(--s5) var(--s4); background: linear-gradient(180deg, rgba(10, 24, 28, 0.92), rgba(8, 12, 13, 0.96));
   border-right: 1px solid var(--line); backdrop-filter: blur(10px); z-index: 30;
 }
 .side-logo { padding: var(--s1) var(--s2) var(--s2); }
@@ -10,7 +10,7 @@
 .chan strong { display: block; font-size: var(--fs-sm); }
 .chan small { display: block; font-size: var(--fs-xs); }
 .chan-dot { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; font: 700 12px var(--font-display);
-  color: var(--accent-ink); background: radial-gradient(circle at 30% 30%, var(--accent-strong), var(--accent) 60%, #1c8f84); box-shadow: 0 0 0 3px rgba(54,226,208,0.15); }
+  color: var(--accent-ink); background: radial-gradient(circle at 30% 30%, var(--accent-strong), var(--accent) 60%, #3d6f66); box-shadow: 0 0 0 3px rgba(var(--sea-rgb), 0.15); }
 .chan-dot.big { width: 52px; height: 52px; font-size: 16px; }
 .nav-group { display: flex; flex-direction: column; gap: 2px; }
 .nav-label { font: 600 11px var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); padding: var(--s2) var(--s3) var(--s1); }
@@ -27,18 +27,18 @@
 .main-col { min-width: 0; display: flex; flex-direction: column; }
 .topbar {
   position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: var(--s3); min-height: 60px;
-  padding: var(--s2) var(--s8); background: rgba(7, 11, 22, 0.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line);
+  padding: var(--s2) var(--s8); background: rgba(8, 12, 13, 0.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line);
 }
 .menu-btn, .top-logo { display: none; }
 .top-right { margin-left: auto; display: flex; align-items: center; gap: var(--s3); }
 .demo-pill {
   display: inline-flex; align-items: center; gap: var(--s2); padding: 6px 12px; border-radius: var(--r-pill); cursor: pointer;
-  background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(255,181,71,0.35); font: 600 var(--fs-xs) var(--font-body); white-space: nowrap;
+  background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(var(--amber-rgb), 0.35); font: 600 var(--fs-xs) var(--font-body); white-space: nowrap;
 }
 .demo-pill.static { cursor: default; }
 .demo-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 .status-light { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--fs-xs); color: var(--text-muted); text-decoration: none; white-space: nowrap; }
-.status-light i { width: 8px; height: 8px; border-radius: 50%; background: var(--state-working); box-shadow: 0 0 0 3px rgba(94,230,168,0.15), 0 0 10px var(--state-working); animation: pulse 6.2s var(--ease-flow) infinite alternate; }
+.status-light i { width: 8px; height: 8px; border-radius: 50%; background: var(--state-working); box-shadow: 0 0 0 3px rgba(159, 209, 184, 0.15), 0 0 10px var(--state-working); animation: pulse 6.2s var(--ease-flow) infinite alternate; }
 .status-light.paused i { background: var(--amber); box-shadow: 0 0 8px var(--amber); animation: none; }
 .status-light.err i { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
 .status-light.off i { background: var(--text-dim); box-shadow: none; animation: none; }
@@ -60,7 +60,7 @@
   .shell { grid-template-columns: minmax(0, 1fr); }
   .side { position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); transform: translateX(-102%); transition: transform var(--t-med) var(--ease-dock); box-shadow: var(--shadow-2); }
   body.nav-open .side { transform: none; }
-  body.nav-open .nav-scrim { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(4,7,14,0.6); }
+  body.nav-open .nav-scrim { display: block; position: fixed; inset: 0; z-index: 25; background: rgba(5, 8, 9, 0.6); }
   .menu-btn, .top-logo { display: inline-flex; }
   .topbar { padding: var(--s2) var(--s4); }
   .main { padding: var(--s6) var(--s5); }

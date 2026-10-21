@@ -1,5 +1,5 @@
 // demo/js/views/onboarding.js
-// "Initialize your observatory": a simulated connection, backfill and boundary walkthrough.
+// Onboarding: a simulated connection, backfill and boundary walkthrough.
 // No OAuth window opens and nothing is sent to Google.
 
 import { h, icon, symbol, wordmark, reducedMotion } from '../ui/dom.js';
@@ -34,7 +34,7 @@ export function render(_r, ctx) {
 function identify(go) {
   return h('section', { class: 'ob-card' },
     h('span', { class: 'eyebrow' }, 'Step 1'),
-    h('h1', null, 'Initialize your observatory'),
+    h('h1', { class: 'serif' }, 'Connect a channel'),
     h('p', { class: 'muted' }, 'Merlark watches one channel at a time. In the demo, that is a fictional history channel.'),
     h('div', { class: 'chan-card' }, h('span', { class: 'chan-dot big', 'aria-hidden': 'true' }, 'LH'),
       h('div', null, h('strong', null, channel.name), h('p', { class: 'muted' }, `${channel.handle} · ${channel.subscribersLabel} · ${channel.niche}`))),
@@ -104,5 +104,5 @@ function readings(go, ctx) {
       step = 0; consentShown = false; progress = 0;
       location.hash = '#/overview';
       setState({ onboarded: true, connected: true });
-    } }, 'Enter the bridge', icon('arrow', 16))));
+    } }, 'Open the overview', icon('arrow', 16))));
 }

@@ -5,7 +5,7 @@
 import { h, icon, symbol, wordmark, mount, reducedMotion } from './ui/dom.js';
 import { closeAll, dialog } from './ui/overlay.js';
 import { initMotionPreference, motionToggle } from './ui/motion.js';
-import { mountFlowField } from './ui/flow.js';
+import { mountAtmosphere } from './ui/ribbons.js';
 import { getState, setState, subscribe } from './state.js';
 import { RANGES, getRange, LAST_CHECK, formatDate } from './data/derive.js';
 import { channel } from './data/fixtures.js';
@@ -22,7 +22,7 @@ import * as onboarding from './views/onboarding.js';
 
 const NAV = [
   { group: 'Observe', items: [
-    { id: 'overview', label: 'Bridge', icon: 'bridge', view: overview },
+    { id: 'overview', label: 'Overview', icon: 'bridge', view: overview },
     { id: 'findings', label: 'Findings', icon: 'findings', view: findingsView },
     { id: 'monitoring', label: 'Monitoring & backfill', icon: 'monitor', view: monitoring },
     { id: 'videos', label: 'Video library', icon: 'videos', view: videosView },
@@ -43,7 +43,8 @@ const ROUTES = Object.fromEntries(NAV.flatMap((g) => g.items).map((i) => [i.id, 
 ROUTES.onboarding = { id: 'onboarding', label: 'Onboarding', view: onboarding, bare: true };
 
 initMotionPreference();
-mountFlowField({ density: 0.55, calmSelector: '.main, .ob-card' }); // quieter behind the working area
+document.documentElement.classList.add('app-atmos');
+mountAtmosphere({ intensity: 0.55 }); // the same night light as the landing, further back behind working surfaces
 const app = document.getElementById('app');
 let current = { key: null };
 
@@ -97,7 +98,7 @@ function shell(route, content, state) {
       h('a', { class: 'btn btn-quiet btn-sm', href: '../' }, icon('back', 14), 'Back to merlark.com')));
   const top = h('header', { class: 'topbar' },
     h('button', { class: 'btn btn-quiet icon-btn menu-btn', 'aria-label': 'Open navigation', onclick: () => document.body.classList.toggle('nav-open') }, icon('menu')),
-    h('a', { class: 'logo top-logo', href: '#/overview', 'aria-label': 'Bridge' }, symbol(24)),
+    h('a', { class: 'logo top-logo', href: '#/overview', 'aria-label': 'Overview' }, symbol(24)),
     h('button', { class: 'demo-pill', onclick: aboutDemo, 'aria-label': 'Interactive demo, sample data. About this demo' }, h('i', { 'aria-hidden': 'true' }), 'Interactive demo · Sample data'),
     h('div', { class: 'top-right' }, statusLight(state), rangeSelect(state)));
   return h('div', { class: 'shell' }, nav, h('div', { class: 'nav-scrim', onclick: () => document.body.classList.remove('nav-open') }),
@@ -119,7 +120,7 @@ function render() {
   let content;
   try {
     content = def.view.render({ params, query }, ctx(state));
-    if (!known) content = h('div', null, h('div', { class: 'notice' }, 'That page does not exist in the demo, so you are on the Bridge.'), content);
+    if (!known) content = h('div', null, h('div', { class: 'notice' }, 'That page does not exist in the demo, so you are on the Overview.'), content);
   } catch (err) {
     console.error(err);
     content = h('div', { class: 'error-state' }, h('h2', null, 'This panel failed to load'), h('p', { class: 'muted' }, 'Something went wrong while drawing sample data.'),
@@ -140,12 +141,12 @@ function render() {
 function welcome() {
   dialog({
     label: 'Welcome aboard',
-    title: 'Initialize your observatory',
+    title: 'Welcome to the Merlark demo',
     body: h('div', { class: 'welcome' }, h('div', { class: 'welcome-orbit', 'aria-hidden': 'true' }, symbol(64, false)),
-      h('p', null, `This is Merlark with sample data from a fictional channel, ${channel.name}. Run the one-minute onboarding to see how a channel is connected and its history reconstructed, or go straight to the bridge.`),
+      h('p', null, `This is Merlark with sample data from a fictional channel, ${channel.name}. Run the one-minute onboarding to see how a channel is connected and its history reconstructed, or go straight to the overview.`),
       h('p', { class: 'dim' }, 'Nothing here contacts Google, charges anything or calls an AI model.')),
     actions: [
-      { label: 'Skip to the bridge', onClick: () => setState({ onboarded: true }) },
+      { label: 'Skip to the overview', onClick: () => setState({ onboarded: true }) },
       { label: 'Start onboarding', variant: 'btn-primary', onClick: () => { setState({ onboarded: true }); navigate('#/onboarding'); } },
     ],
   });

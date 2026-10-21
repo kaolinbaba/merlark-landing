@@ -4,6 +4,9 @@
 import { h, icon } from './dom.js';
 import { STATE_LABEL, QUALITY_HELP, formatMultiplier, formatInt, formatShort, formatTime, provenanceOf } from '../data/derive.js';
 import { BACKFILL_LABEL } from '../data/fixtures.js';
+import { thumb } from './thumbs.js';
+
+export { thumb };
 
 export const stateChip = (state) =>
   h('span', { class: `chip state state-${state}` }, h('i', { class: 'lamp', 'aria-hidden': 'true' }), STATE_LABEL[state]);
@@ -20,24 +23,6 @@ export const provChip = (v) => {
 };
 
 export const previewChip = (text = 'Feature preview') => h('span', { class: 'chip preview', title: 'Shown with sample data. Not available in the product yet.' }, text);
-
-// Deterministic video thumbnail art: a horizon, an orbit and a route line seeded by the id.
-export function thumb(v, w = 112) {
-  const seed = [...v.id].reduce((a, c) => a + c.charCodeAt(0), 0);
-  const hue = [190, 172, 248, 32, 210][seed % 5];
-  const H = Math.round((w * 9) / 16);
-  const id = `g${v.id}${w}`;
-  return h('svg', { class: 'thumb', width: w, height: H, viewBox: '0 0 160 90', 'aria-hidden': 'true' },
-    h('defs', null, h('linearGradient', { id, x1: 0, y1: 0, x2: 1, y2: 1 },
-      h('stop', { offset: 0, 'stop-color': `hsl(${hue} 55% 22%)` }), h('stop', { offset: 1, 'stop-color': `hsl(${(hue + 40) % 360} 45% 9%)` }))),
-    h('rect', { width: 160, height: 90, fill: `url(#${id})` }),
-    h('path', { d: `M0 ${62 + (seed % 9)} Q 50 ${50 + (seed % 13)} 90 ${60 + (seed % 7)} T 160 ${56 + (seed % 11)} V90 H0Z`, fill: `hsl(${hue} 40% 6% / .8)` }),
-    v.opening === 'map'
-      ? h('path', { d: `M18 ${30 + (seed % 20)} C 50 10, 80 ${60 - (seed % 20)}, 140 ${22 + (seed % 15)}`, stroke: '#ffb547', 'stroke-width': 2, 'stroke-dasharray': '4 4', fill: 'none' })
-      : h('circle', { cx: 40 + (seed % 70), cy: 30, r: 10 + (seed % 6), fill: `hsl(${hue} 70% 70% / .25)` }),
-    v.format === 'short' ? h('text', { x: 8, y: 16, 'font-size': 10, fill: '#e6edf7', 'font-family': 'system-ui', 'font-weight': 700 }, 'SHORT') : null,
-    h('text', { x: 152, y: 84, 'text-anchor': 'end', 'font-size': 9, fill: '#e6edf7', 'font-family': 'ui-monospace, monospace' }, formatTime(v.dur)));
-}
 
 export function multiplierLine(s) {
   if (s.multiplier == null) return h('span', { class: 'mult none' }, 'No comparison yet');

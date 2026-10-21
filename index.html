@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" style="background:#070b16">
+<html lang="en" style="background:#080c0d">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#070b16">
+<meta name="theme-color" content="#080c0d">
 <title>Merlark</title>
 <meta name="description" content="Merlark watches a YouTube channel's content patterns and shows what changed, the videos and timestamps behind it, and what to try next. Private beta. Explore the interactive demo with sample data.">
 <meta name="robots" content="index,follow">
@@ -21,124 +21,155 @@
 <link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<link rel="preload" href="assets/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <script>try{if(localStorage.getItem('merlark-motion')==='off')document.documentElement.classList.add('motion-off')}catch(e){}</script>
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/space.css">
+<link rel="stylesheet" href="assets/css/atmosphere.css">
 <link rel="stylesheet" href="demo/css/components.css">
-<link rel="stylesheet" href="demo/css/views.css">
-<link rel="stylesheet" href="assets/css/ambient.css">
-<link rel="stylesheet" href="assets/css/replay.css">
 <link rel="stylesheet" href="assets/css/landing.css">
+<link rel="stylesheet" href="assets/css/scene.css">
 </head>
-<body>
-<div class="starfield" aria-hidden="true"></div>
+<body class="landing">
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="site-head">
   <div class="wrap head-row">
     <a class="logo" href="./" aria-label="Merlark home" data-logo="lockup"></a>
     <nav class="site-nav" aria-label="Sections">
-      <a href="#how">How it works</a>
-      <a href="#capabilities">Capabilities</a>
-      <a href="#availability">Availability</a>
+      <a href="#story">The story</a>
+      <a href="#beta">The beta</a>
+      <a href="#status">Status</a>
     </nav>
     <span class="head-motion" id="motion-toggle"></span>
-    <a class="btn btn-primary btn-sm demo-cta" href="demo/">Explore interactive demo</a>
+    <a class="head-cta demo-cta" href="demo/">Explore the demo</a>
   </div>
 </header>
 
 <main id="main">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow">Channel intelligence for YouTube creators · Private beta</p>
-        <h1 id="hero-title">YouTube reviews your whole channel. <span class="glow">Merlark keeps watch.</span></h1>
-        <p class="lead">See what changed across your uploads, the videos and timestamps behind it, and what you could try next.</p>
-        <div class="btn-row hero-ctas">
-          <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore interactive demo</a>
-          <a class="btn btn-ghost btn-lg" href="mailto:onur@merlark.com?subject=Merlark%20beta">Contact the founder</a>
-        </div>
-        <ul class="hero-facts">
-          <li><i class="dot built"></i>Read-only Google connection</li>
-          <li><i class="dot built"></i>Official YouTube APIs only</li>
-          <li><i class="dot demo"></i>Demo uses a fictional channel</li>
-        </ul>
+  <section class="scene" id="story" aria-label="How Merlark reads a channel, with sample data">
+    <div class="scene-pin">
+      <div class="scene-scrim" aria-hidden="true"></div>
+      <div class="scene-copy wrap">
+        <article class="stage-copy stage-0">
+          <p class="eyebrow">Private beta · For YouTube creators</p>
+          <h1 class="serif display">YouTube reviews your whole channel. <span class="warm">Merlark keeps watch.</span></h1>
+          <p class="lead">See what changed across your uploads, the videos and timestamps behind it, and what you could try next.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore the interactive demo</a>
+          </div>
+          <ul class="facts">
+            <li>Read-only Google connection</li>
+            <li>Official YouTube APIs only</li>
+            <li>Sample data from a fictional channel</li>
+          </ul>
+        </article>
+
+        <article class="stage-copy stage-1">
+          <p class="eyebrow"><span class="step num">01</span> Discovery</p>
+          <h2 class="serif">Eight uploads share one opening.</h2>
+          <p>On the fictional channel <em>Lanternfish Histories</em>, <span data-f1="n">8</span> long-form uploads open on an animated route map within the first ten seconds. Merlark groups uploads that share a structure and sets them against the rest of the channel.</p>
+          <p class="state-line"><span class="chip state state-working"><i class="lamp" aria-hidden="true"></i>Working</span><span class="dim">Evidence: <span data-f1="quality">Strong</span></span></p>
+        </article>
+
+        <article class="stage-copy stage-2">
+          <p class="eyebrow"><span class="step num">02</span> Evidence</p>
+          <h2 class="serif">Every finding points to a moment.</h2>
+          <p><strong data-ev="title">The Convoy That Sailed Into Fog</strong>, <span class="ts num" data-ev="ts">0:00–0:10</span>: <span data-ev="label">Animated route map before narration</span>.</p>
+          <p class="dim">Observed by Merlark on <span data-ev="date">Aug 26, 2026</span>, after the channel was connected. No evidence, no finding.</p>
+        </article>
+
+        <article class="stage-copy stage-3">
+          <p class="eyebrow"><span class="step num">03</span> Comparison</p>
+          <h2 class="serif">Measured against the channel’s own baseline.</h2>
+          <p class="big-mult"><b class="num serif" data-f1="mult">1.4×</b><span>channel baseline</span></p>
+          <p>The map-first uploads averaged <b class="num" data-f1="groupViews">29,450</b> views in their first week. The median of the other <span data-f1="nBaseline">20</span> long-form uploads is <b class="num" data-f1="baselineViews">21,200</b>.</p>
+          <p class="dim small">An association, not a cause: other differences between these videos could explain part of the gap. Earlier uploads are historical estimates reconstructed after connection; deleted, private or unavailable videos may not be represented.</p>
+        </article>
+
+        <article class="stage-copy stage-4">
+          <p class="eyebrow"><span class="step num">04</span> Next step</p>
+          <h2 class="serif">A change worth trying, tracked on its own.</h2>
+          <p class="action" data-f1="action">Try a route map in the first 10 seconds of the next travel-themed episode.</p>
+          <p class="dim">If you try it, later readings are recorded as outcomes, kept apart from the finding that suggested them.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore the interactive demo</a>
+            <a class="text-link quiet" href="mailto:onur@merlark.com?subject=Merlark%20beta">Contact the founder</a>
+          </div>
+        </article>
       </div>
-      <div class="hero-stage">
-        <div class="stage-orbits" aria-hidden="true"><i class="so so1"></i><i class="so so2"></i><i class="so so3"><b></b></i></div>
-        <div id="replay" class="replay-host" aria-label="Demo replay with sample data"></div>
+      <div class="scene-foot wrap">
+        <p class="sample-note"><i aria-hidden="true"></i>Sample data · fictional channel</p>
+        <ol class="scene-nav" aria-label="Story steps">
+          <li><button type="button">Opening</button></li>
+          <li><button type="button">Discovery</button></li>
+          <li><button type="button">Evidence</button></li>
+          <li><button type="button">Comparison</button></li>
+          <li><button type="button">Next step</button></li>
+        </ol>
       </div>
     </div>
   </section>
 
-  <section class="story" aria-labelledby="story-title">
-    <div class="wrap">
-      <p class="eyebrow">One finding, end to end</p>
-      <h2 id="story-title">From what changed to what to try next</h2>
-      <div class="story-grid" id="story"></div>
-    </div>
-  </section>
-
-  <section class="how" id="how" aria-labelledby="how-title">
-    <div class="wrap">
-      <p class="eyebrow">How it works</p>
-      <h2 id="how-title">Five steps, one channel, your own history</h2>
-      <ol class="how-steps">
-        <li class="fx-host"><svg class="fx fx-sweep" viewBox="0 0 120 64" aria-hidden="true"><g class="grid-lines"><path d="M0 16H120M0 32H120M0 48H120"/></g><g class="pts"><circle cx="14" cy="40" r="2.5"/><circle cx="34" cy="30" r="2.5"/><circle cx="54" cy="44" r="2.5"/><circle cx="74" cy="22" r="2.5"/><circle cx="94" cy="36" r="2.5"/></g><line class="sweep" x1="0" y1="6" x2="0" y2="60"/></svg>
-          <span class="jn num">01</span><h3>Monitor</h3><p>Connect with read-only Google sign-in. Merlark records each upload and its first-week reading.</p></li>
-        <li class="fx-host"><svg class="fx fx-resolve" viewBox="0 0 120 64" aria-hidden="true"><g class="pts"><circle cx="14" cy="14" r="2.5"/><circle cx="96" cy="12" r="2.5"/><circle cx="28" cy="52" r="2.5"/><circle cx="104" cy="50" r="2.5"/><circle cx="60" cy="8" r="2.5"/></g><path class="line" d="M14 44 L40 36 L66 28 L92 20" pathLength="1"/></svg>
-          <span class="jn num">02</span><h3>Find patterns</h3><p>Uploads that share a structure are grouped and compared with the rest of your channel.</p></li>
-        <li class="fx-host"><svg class="fx fx-focus" viewBox="0 0 120 64" aria-hidden="true"><rect class="frame" x="10" y="12" width="44" height="26" rx="3"/><rect class="frame" x="66" y="12" width="44" height="26" rx="3"/><rect class="frame target" x="38" y="30" width="44" height="26" rx="3"/><g class="reticle"><circle cx="60" cy="43" r="9"/><path d="M60 30V36M60 50V56M47 43H53M67 43H73"/></g></svg>
-          <span class="jn num">03</span><h3>Inspect evidence</h3><p>Every finding opens the exact videos and timestamps behind it. No evidence, no finding.</p></li>
-        <li class="fx-host"><svg class="fx fx-align" viewBox="0 0 120 64" aria-hidden="true"><line class="base" x1="6" y1="40" x2="114" y2="40"/><path class="a" d="M6 46 C30 30, 50 48, 74 26 S106 22, 114 20" pathLength="1"/><path class="b" d="M6 42 C30 44, 56 36, 80 40 S106 38, 114 40" pathLength="1"/></svg>
-          <span class="jn num">04</span><h3>Compare</h3><p>Groups are measured against your own channel’s baseline, never someone else’s.</p></li>
-        <li class="fx-host"><svg class="fx fx-join" viewBox="0 0 120 64" aria-hidden="true"><path class="tl" d="M6 52H114"/><g class="old"><circle cx="18" cy="38" r="2.5"/><circle cx="38" cy="30" r="2.5"/><circle cx="58" cy="34" r="2.5"/><circle cx="78" cy="24" r="2.5"/></g><circle class="new" cx="98" cy="18" r="3.5"/><circle class="ring" cx="98" cy="18" r="7"/></svg>
-          <span class="jn num">05</span><h3>Track outcomes</h3><p>Choose a change to try. Later readings join the same timeline, recorded separately from the finding.</p></li>
+  <section class="beta" id="beta" aria-labelledby="beta-title">
+    <div class="wrap beta-grid">
+      <div class="beta-intro">
+        <p class="eyebrow">The beta, screen by screen</p>
+        <h2 id="beta-title" class="serif section-title">One fictional channel, every screen of the product.</h2>
+        <p class="muted">The demo runs entirely in your browser on fixed sample data. Nothing connects to Google, charges a card or calls an AI model.</p>
+        <a class="text-link demo-cta" href="demo/">Open the demo</a>
+      </div>
+      <figure class="beta-shot">
+        <a class="demo-cta" href="demo/" aria-label="Open the demo overview">
+          <img src="assets/img/demo-overview.webp" alt="The demo overview: the finding “Map-first openings” on the left, its eight supporting videos connected on the right, and the comparison with the channel baseline below." width="1600" height="1000" loading="lazy" decoding="async">
+        </a>
+        <figcaption class="dim">Overview of the interactive demo, with sample data.</figcaption>
+      </figure>
+      <ol class="screens">
+        <li><a href="demo/#/findings"><span class="n serif">i</span><b>Findings</b><span>Each pattern with its state, evidence quality, and observation kept apart from interpretation.</span></a></li>
+        <li><a href="demo/#/monitoring"><span class="n serif">ii</span><b>Monitoring &amp; backfill</b><span>A visible line between reconstructed history and what Merlark observed after connection.</span></a></li>
+        <li><a href="demo/#/videos"><span class="n serif">iii</span><b>Video library</b><span>Every upload with its first-week reading, provenance and the findings it supports.</span></a></li>
+        <li><a href="demo/#/compare"><span class="n serif">iv</span><b>Compare</b><span>Groups against the same channel’s baseline. Insufficient evidence is shown as such.</span></a></li>
+        <li><a href="demo/#/brief"><span class="n serif">v</span><b>Weekly brief</b><span>What published, which readings arrived and which findings changed state.</span></a></li>
+        <li><a href="demo/#/interventions"><span class="n serif">vi</span><b>Interventions</b><span>Plan a change, then follow its outcome, recorded separately from the finding.</span></a></li>
+        <li><a href="demo/#/script"><span class="n serif">vii</span><b>Script workspace</b><span>Drafts that cite the findings behind them; weak evidence becomes a labelled suggestion.</span></a></li>
       </ol>
     </div>
   </section>
 
-  <section class="capabilities" id="capabilities" aria-labelledby="cap-title">
-    <div class="wrap">
-      <p class="eyebrow">The beta, screen by screen</p>
-      <h2 id="cap-title">The actual demo interfaces</h2>
-      <div class="cap" id="cap"></div>
-    </div>
-  </section>
-
-  <section class="availability" id="availability" aria-labelledby="av-title">
+  <section class="status" id="status" aria-labelledby="status-title">
     <div class="wrap">
       <p class="eyebrow">Where Merlark stands</p>
-      <h2 id="av-title">Private beta, built in the open</h2>
-      <div class="av-grid">
-        <div class="av-col"><h3><i class="dot built"></i>Working in private testing</h3><ul>
+      <h2 id="status-title" class="serif section-title">Private beta, built in the open.</h2>
+      <div class="status-cols">
+        <div><h3><i class="mark built" aria-hidden="true"></i>Working in private testing</h3><ul>
           <li>Google sign-in with read-only YouTube access</li>
           <li>Channel and video data through the official YouTube APIs</li>
           <li>Stored YouTube statistics deleted automatically within 30 days</li>
           <li>Disconnecting a channel deletes its stored data</li></ul></div>
-        <div class="av-col"><h3><i class="dot demo"></i>Shown in the demo with sample data</h3><ul>
+        <div><h3><i class="mark demo" aria-hidden="true"></i>Shown in the demo with sample data</h3><ul>
           <li>Findings with evidence, states and baselines</li>
           <li>Backfill and the connection boundary</li>
           <li>Weekly brief, comparisons, interventions</li>
           <li>Evidence-grounded script workspace</li></ul></div>
-        <div class="av-col"><h3><i class="dot planned"></i>Planned</h3><ul>
+        <div><h3><i class="mark planned" aria-hidden="true"></i>Planned</h3><ul>
           <li>Claude API to write reports from stored evidence</li>
           <li>Self-service account deletion</li>
           <li>Paid Early Access with one-click cancellation</li></ul></div>
       </div>
-      <button class="btn btn-ghost btn-sm" id="av-details" type="button">What the demo can and cannot show</button>
+      <button class="btn btn-ghost" id="av-details" type="button">What the demo can and cannot show</button>
     </div>
   </section>
 
-  <section class="final-cta" aria-labelledby="final-title">
-    <div class="wrap final-inner">
-      <div class="final-orbit" aria-hidden="true"><i></i><i></i><span data-logo="symbol-lg"></span></div>
-      <h2 id="final-title">Step onto the bridge</h2>
+  <section class="closing" aria-labelledby="closing-title">
+    <div class="wrap closing-inner">
+      <span class="closing-mark" data-logo="symbol-lg" aria-hidden="true"></span>
+      <h2 id="closing-title" class="serif">See the evidence for yourself.</h2>
       <p class="muted">Every screen, one fictional channel, nothing leaves your browser.</p>
-      <div class="btn-row center">
-        <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore interactive demo</a>
-        <a class="btn btn-quiet" href="mailto:onur@merlark.com?subject=Merlark%20beta">Contact the founder</a>
+      <div class="cta-row center">
+        <a class="btn btn-primary btn-lg demo-cta" href="demo/">Explore the interactive demo</a>
+        <a class="text-link quiet" href="mailto:onur@merlark.com?subject=Merlark%20beta">Contact the founder</a>
       </div>
     </div>
   </section>
@@ -155,8 +186,6 @@
       <p id="motion-toggle-foot"></p></div>
   </div>
 </footer>
-
-<div class="dock-overlay" aria-hidden="true"><span data-logo="symbol-lg"></span></div>
 <script type="module" src="assets/js/landing.js"></script>
 </body>
 </html>
