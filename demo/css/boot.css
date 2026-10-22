@@ -1,4 +1,5 @@
 /* demo/css/boot.css — first paint before the app module loads, and the no-JS note. */
-.boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--ink-muted); font: 600 var(--fs-sm)/1.2 var(--font-display); }
-.boot-eye { animation: lampBlink 1.4s ease-in-out infinite; }
+.boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--ink-muted); font: 600 var(--fs-md)/1.2 var(--font-display); }
+.boot svg { color: var(--ink); animation: bootPulse 1.6s ease-in-out infinite; }
+@keyframes bootPulse { 50% { opacity: 0.45; } }
 .noscript { text-align: center; padding: 40px 16px; }

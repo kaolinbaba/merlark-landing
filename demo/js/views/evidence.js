@@ -40,7 +40,7 @@ export function videoPreview(v, { at = 0, focusSource } = {}) {
     readout.textContent = `${formatTime(playhead)} / ${formatTime(v.dur)}`;
     scrub.value = playhead;
     const seg = activeSeg();
-    caption.textContent = seg ? `${seg.label} · ${seg.name}` : 'Nothing flagged at this point.';
+    caption.textContent = seg ? `${seg.label} · ${seg.name}` : 'Nothing marked at this point.';
     screen.classList.toggle('in-seg', !!seg);
     // The sample moment being played lights up its jump chip and evidence window.
     jumps.forEach((j, i) => j.classList.toggle('active', segs[i] === seg));
@@ -59,7 +59,7 @@ export function videoPreview(v, { at = 0, focusSource } = {}) {
     if (playing) timer = setInterval(() => { playhead = Math.min(v.dur, playhead + Math.max(1, Math.round(v.dur / 120))); if (playhead >= v.dur) { playing = false; clearInterval(timer); } if (!root.isConnected) clearInterval(timer); draw(); }, 120);
     draw();
   });
-  screen.append(thumb(v, 480), h('span', { class: 'vp-sample' }, 'Sample cover · no real video'));
+  screen.append(thumb(v, 480), h('span', { class: 'vp-sample' }, 'Sample cover'));
   root.append(screen,
     h('div', { class: 'vp-controls' }, playBtn, scrub, readout),
     caption,
@@ -74,22 +74,22 @@ export function openEvidence({ video, segment, findingId, findingName }) {
   const base = document.getElementById('app') ? '' : 'demo/'; // links work from the landing page too
   const prov = provenanceOf(video);
   drawer({
-    label: findingName ? `Evidence · ${findingName}` : 'Evidence',
+    label: findingName ? `The videos behind it · ${findingName}` : 'The videos behind it',
     title: video.title,
     wide: true,
     body: h('div', { class: `ev-drawer ${reducedMotion() ? '' : 'focusing'}` },
       h('div', { class: 'ev-facts' },
-        fact('Source', prov === 'historical' ? 'Rebuilt from history after you connected' : 'Seen by Merlark after you connected'),
+        fact('History', prov === 'historical' ? 'Earlier history' : 'Since connection'),
         fact('Published', formatDate(video.date)),
-        fact('Period', hasReading(video, TODAY) ? `${formatDate(video.date)} – ${formatDate(readingDate(video))} (week one)` : 'Week one, still running'),
-        fact('Timestamp', `${formatTime(segment.start)}–${formatTime(segment.end)} · ${segment.label}`),
-        fact('Week-one views', video.views7 != null && hasReading(video, TODAY) ? formatInt(video.views7) : 'Not yet'),
-        h('div', { class: 'fact' }, h('span', { class: 'dim' }, 'Where from'), provChip(video))),
+        fact('The first week', hasReading(video, TODAY) ? `${formatDate(video.date)} – ${formatDate(readingDate(video))}` : 'Still running'),
+        fact('Moment', `${formatTime(segment.start)}–${formatTime(segment.end)} · ${segment.label}`),
+        fact('First-week views', video.views7 != null && hasReading(video, TODAY) ? formatInt(video.views7) : 'Not yet'),
+        h('div', { class: 'fact' }, h('span', { class: 'dim' }, 'Label'), provChip(video))),
       prov === 'historical' ? h('p', { class: 'backfill-label' }, icon('info', 14), BACKFILL_LABEL) : null,
       videoPreview(video, { at: segment.start, focusSource: findingId }),
       h('div', { class: 'ev-links' },
-        h('a', { class: 'btn btn-ghost btn-sm', href: `${base}#/videos/${video.id}?t=${segment.start}`, 'data-close-overlay': '' }, 'Open the video page', icon('arrow', 14)),
-        findingId && findingId.startsWith('F') ? h('a', { class: 'btn btn-quiet btn-sm', href: `${base}#/findings/${findingId}`, 'data-close-overlay': '' }, base ? 'Open in the demo' : 'Back to the finding') : null)),
+        h('a', { class: 'btn btn-ghost btn-sm', href: `${base}#/videos/${video.id}?t=${segment.start}`, 'data-close-overlay': '' }, 'Open the video page', icon('arrow', 16)),
+        findingId && findingId.startsWith('F') ? h('a', { class: 'btn btn-quiet btn-sm', href: `${base}#/patterns/${findingId}`, 'data-close-overlay': '' }, base ? 'Open in the demo' : 'Back to the pattern') : null)),
   });
 }
 

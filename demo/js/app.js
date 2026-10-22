@@ -1,12 +1,12 @@
 // demo/js/app.js
 // Shell, navigation and hash router for the Merlark interactive demo.
-// Hash routes (#/findings/F1) keep every screen refresh-safe on static hosting.
+// Hash routes (#/patterns/F1) keep every screen refresh-safe on static hosting.
 
-import { h, icon, symbol, mount, reducedMotion } from './ui/dom.js';
+import { h, icon, symbol, mount, reducedMotion, segmented } from './ui/dom.js';
 import { closeAll, dialog } from './ui/overlay.js';
 import { initMotionPreference, motionToggle } from './ui/motion.js';
 import { getState, setState, subscribe } from './state.js';
-import { RANGES, getRange, LAST_CHECK, formatDate } from './data/derive.js';
+import { RANGES, getRange } from './data/derive.js';
 import { channel } from './data/fixtures.js';
 import * as overview from './views/overview.js';
 import * as findingsView from './views/findings.js';
@@ -19,33 +19,30 @@ import * as script from './views/script.js';
 import * as settings from './views/settings.js';
 import * as onboarding from './views/onboarding.js';
 
-// The rail: rounded icon buttons with short labels. Groups are separated by a small gap.
+export const DISCLOSURE = 'This demo uses fictional data. It doesn’t connect to Google, take payments or call an AI model. Your demo changes stay in this browser.';
+export const AFFILIATION = 'Merlark is an independent project and isn’t affiliated with YouTube or Google.';
+
 const NAV = [
-  { group: 'See', items: [
-    { id: 'overview', label: 'Overview', icon: 'bridge', view: overview },
-    { id: 'findings', label: 'Findings', icon: 'findings', view: findingsView },
-    { id: 'monitoring', label: 'Monitoring', icon: 'monitor', view: monitoring },
-    { id: 'videos', label: 'Videos', icon: 'videos', view: videosView },
-  ] },
-  { group: 'Decide', items: [
-    { id: 'compare', label: 'Compare', icon: 'compare', view: compare },
-    { id: 'brief', label: 'Brief', icon: 'brief', view: brief },
-  ] },
-  { group: 'Try', items: [
-    { id: 'experiments', label: 'Experiments', icon: 'interventions', view: interventions },
-    { id: 'script', label: 'Script', icon: 'script', view: script },
-  ] },
-  { group: 'Channel', items: [
-    { id: 'settings', label: 'Settings', icon: 'settings', view: settings },
-  ] },
+  { id: 'overview', label: 'Overview', icon: 'overview', view: overview },
+  { id: 'patterns', label: 'Patterns', icon: 'patterns', view: findingsView },
+  { id: 'history', label: 'Channel history', icon: 'history', view: monitoring },
+  { id: 'videos', label: 'Videos', icon: 'videos', view: videosView },
+  { id: 'compare', label: 'Compare', icon: 'compare', view: compare },
+  { id: 'recap', label: 'Weekly recap', icon: 'recap', view: brief },
+  { id: 'experiments', label: 'Experiments', icon: 'experiments', view: interventions },
+  { id: 'drafts', label: 'Drafts', icon: 'drafts', view: script },
+  { id: 'settings', label: 'Settings', icon: 'settings', view: settings },
 ];
-const ROUTES = Object.fromEntries(NAV.flatMap((g) => g.items).map((i) => [i.id, i]));
-ROUTES.onboarding = { id: 'onboarding', label: 'Getting started', view: onboarding, bare: true };
-const ALIASES = { interventions: 'experiments' }; // older links keep working
+const ROUTES = Object.fromEntries(NAV.map((i) => [i.id, i]));
+ROUTES.onboarding = { id: 'onboarding', label: 'Welcome', view: onboarding, bare: true };
+// Older links keep working.
+const ALIASES = { findings: 'patterns', monitoring: 'history', brief: 'recap', script: 'drafts', interventions: 'experiments' };
+const SHORT_RANGE = { all: 'All history', '6m': '6 months', '90d': '90 days', since: 'Since connection' };
 
 initMotionPreference();
 const app = document.getElementById('app');
 let current = { key: null };
+let lastRange = null;
 
 function parseHash() {
   const raw = location.hash.replace(/^#\/?/, '');
@@ -57,54 +54,64 @@ function parseHash() {
 
 export const navigate = (hash) => { if (location.hash === hash) render(); else location.hash = hash; };
 
-function aboutDemo() {
+export function aboutDemo() {
   dialog({
     label: 'About this demo',
-    title: 'A pretend channel to play with',
+    title: 'What’s real, what’s sample',
     body: h('div', { class: 'prose' },
-      h('p', null, `Everything here belongs to a made-up channel, ${channel.name}. The videos, numbers and findings are sample data, and they agree across every screen.`),
-      h('p', null, 'Nothing you do here contacts Google or YouTube, charges a card, deletes anything or calls an AI model. Your clicks are saved only in this browser, so a refresh keeps your place.'),
-      h('h3', null, 'What’s real today'),
-      h('p', null, 'Merlark is in private testing. Read-only Google sign-in, reading channel data through the official YouTube APIs, deleting stored YouTube statistics within 30 days, and deleting data when you disconnect all work. Findings, the brief, comparisons, experiments, the script workspace and billing are previews.'),
-      h('h3', null, 'What still needs approval'),
-      h('p', null, 'Long histories, finding states and comparisons count as derived metrics. YouTube’s developer policies allow them only after an API audit. Merlark hasn’t received that approval, and today it keeps YouTube statistics for 30 days at most. The months of history here show the idea, not what runs today.'),
-      h('p', { class: 'dim' }, 'Merlark isn’t affiliated with or endorsed by YouTube or Google. It doesn’t estimate monetization status or predict YouTube decisions.')),
+      h('p', null, DISCLOSURE),
+      h('p', null, `${channel.name} is a made-up channel. Its videos, numbers and patterns agree across every screen.`),
+      h('h3', null, 'In private testing'),
+      h('p', null, 'Google connection with read-only access, and basic channel and video data from the official YouTube APIs. Stored YouTube statistics are deleted within 30 days, and disconnecting deletes the channel’s stored data.'),
+      h('h3', null, 'Not available yet'),
+      h('p', null, 'Patterns, comparisons and history count as derived metrics under YouTube’s developer policies, which need an API audit first. Merlark hasn’t received that approval. The months of history here show the idea; the connected product keeps statistics for 30 days at most.'),
+      h('p', { class: 'dim' }, AFFILIATION)),
     actions: [{ label: 'Got it', variant: 'btn-primary' }],
   });
 }
 
-function rangeSelect(state) {
-  return h('label', { class: 'range' }, h('span', { class: 'sr-only' }, 'Date range'),
-    h('select', { onchange: (e) => setState({ range: e.target.value }) },
-      RANGES.map((r) => h('option', { value: r.id, selected: r.id === state.range }, r.label))));
-}
-
-// The "Watching" strip: the lamp is coral while monitoring is on.
-function watchStrip(state) {
-  const s = !state.connected ? ['off', 'Not connected'] : state.simulateError ? ['err', 'Check failed'] : state.monitoringPaused ? ['off', 'Paused'] : ['on', 'Watching'];
-  return h('a', { class: `watch-strip s-${s[0]}`, href: '#/monitoring', title: `Last check ${formatDate(LAST_CHECK.date)} ${LAST_CHECK.time}` },
-    h('i', { class: `watch-lamp ${s[0] === 'on' ? '' : 'off'}`, 'aria-hidden': 'true' }),
-    h('span', null, h('b', null, s[1]), h('span', { class: 'ws-chan' }, ` · ${channel.name}`)));
-}
-
-function shell(route, content, state) {
-  const nav = h('nav', { class: 'rail', 'aria-label': 'Demo sections' },
-    h('a', { class: 'rail-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(34)),
-    h('div', { class: 'rail-items' }, NAV.map((g) => h('div', { class: 'rail-group', role: 'group', 'aria-label': g.group },
-      g.items.map((i) => h('a', { href: `#/${i.id}`, class: `rail-btn ${route === i.id ? 'on' : ''}`, 'aria-current': route === i.id ? 'page' : null },
-        h('span', { class: 'rail-ico' }, icon(i.icon, 20)), h('span', { class: 'rail-label' }, i.label)))))));
+// The shell is built once and kept, so the rail and the date control can animate between screens.
+let frame = null;
+function ensureShell(state) {
+  if (frame && frame.root.isConnected) return frame;
+  const railEl = h('nav', { class: 'rail', 'aria-label': 'Demo sections' },
+    h('a', { class: 'rail-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(30)),
+    h('div', { class: 'rail-items' }, NAV.map((i) => h('a', { href: `#/${i.id}`, class: 'rail-btn', 'data-route': i.id },
+      h('span', { class: 'rail-ico' }, icon(i.icon, 20)), h('span', { class: 'rail-label' }, i.label)))));
+  const chanState = h('small', null);
+  const seg = segmented(RANGES.map((r) => [r.id, SHORT_RANGE[r.id]]), state.range, (v) => setState({ range: v }), { label: 'Dates', className: 'range-seg' });
   const top = h('header', { class: 'topbar' },
-    h('a', { class: 'top-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(28)),
-    watchStrip(state),
+    h('a', { class: 'top-logo', href: '../', 'aria-label': 'Back to merlark.com' }, symbol(26)),
+    h('div', { class: 'chan' }, h('span', { class: 'chan-dot', 'aria-hidden': 'true' }, 'LH'), h('span', null, h('b', null, channel.name), chanState)),
+    h('div', { class: 'top-range' }, h('span', { class: 'top-range-ico', 'aria-hidden': 'true' }, icon('calendar', 16)), seg),
     h('div', { class: 'top-right' },
-      h('button', { class: 'chip demo-pill', type: 'button', onclick: aboutDemo, 'aria-label': 'Sample data, made-up channel. About this demo' }, icon('info', 14), 'Sample data · made-up channel'),
-      rangeSelect(state), motionToggle()));
-  return h('div', { class: 'shell' }, nav,
-    h('div', { class: 'main-col' }, top, h('main', { id: 'main', class: 'main', tabindex: -1 }, content)));
+      h('button', { class: 'btn btn-quiet btn-sm about-btn', type: 'button', onclick: aboutDemo }, icon('info', 16), h('span', null, 'Sample data'))));
+  const main = h('main', { id: 'main', class: 'main', tabindex: -1 });
+  const root = h('div', { class: 'shell' }, railEl,
+    h('div', { class: 'main-col' }, top, main,
+      h('footer', { class: 'demo-foot' }, h('p', null, DISCLOSURE), h('p', null, AFFILIATION), motionToggle())));
+  mount(app, root);
+  frame = { root, railEl, seg, chanState, main };
+  return frame;
+}
+
+function paintShell(f, route, state) {
+  f.railEl.querySelectorAll('.rail-btn').forEach((a) => {
+    const on = a.dataset.route === route;
+    a.classList.toggle('on', on);
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  f.seg.setValue(state.range);
+  f.chanState.textContent = state.connected ? 'Sample channel' : 'Not connected';
 }
 
 function ctx(state) {
   return { state, range: getRange(state.range), navigate, rerender: render };
+}
+
+export function errorState(retry) {
+  return h('div', { class: 'error-state', role: 'alert' }, h('h2', null, 'That didn’t load. Let’s try again.'),
+    h('button', { class: 'btn btn-primary', type: 'button', onclick: retry }, icon('reset', 16), 'Try again'));
 }
 
 function render() {
@@ -121,22 +128,26 @@ function render() {
     if (!known) content = h('div', null, h('div', { class: 'notice' }, 'That page isn’t in the demo, so here’s the Overview.'), content);
   } catch (err) {
     console.error(err);
-    content = h('div', { class: 'error-state' }, h('h2', null, 'This panel didn’t load'), h('p', { class: 'muted' }, 'Something went wrong while drawing the sample data.'),
-      h('button', { class: 'btn btn-primary', onclick: render }, 'Try again'));
+    content = errorState(render);
   }
   if (def.bare) {
+    frame = null;
     mount(app, content);
     if (routeChanged) { const m = app.querySelector('#main'); if (m) m.focus({ preventScroll: true }); window.scrollTo(0, 0); }
     document.title = `${def.label} · Merlark demo`;
     return;
   }
   const scrollY = routeChanged ? 0 : window.scrollY;
-  // Navigation is immediate; panels pop in on the new screen without delaying it.
-  mount(app, shell(route, content, state));
+  const f = ensureShell(state);
+  paintShell(f, route, state);
+  mount(f.main, content);
+  const rangeChanged = lastRange != null && lastRange !== state.range;
+  lastRange = state.range;
+  f.main.classList.remove('enter', 'refresh');
+  if (!reducedMotion() && (routeChanged || rangeChanged)) { void f.main.offsetWidth; f.main.classList.add(routeChanged ? 'enter' : 'refresh'); }
   if (routeChanged) {
-    if (!reducedMotion()) app.querySelector('.main').classList.add('enter');
-    const on = app.querySelector('.rail-btn.on'); if (on && on.scrollIntoView && window.innerWidth < 1024) on.scrollIntoView({ block: 'nearest', inline: 'center' });
-    app.querySelector('#main').focus({ preventScroll: true });
+    const on = f.railEl.querySelector('.rail-btn.on'); if (on && on.scrollIntoView && window.innerWidth < 1024) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    f.main.focus({ preventScroll: true });
   }
   window.scrollTo(0, scrollY);
   document.title = `${def.label} · Merlark demo`;
@@ -145,13 +156,13 @@ function render() {
 function welcome() {
   dialog({
     label: 'Welcome',
-    title: 'Take Merlark for a spin',
-    body: h('div', { class: 'welcome' }, h('div', { class: 'welcome-mark', 'aria-hidden': 'true' }, symbol(64, false)),
-      h('p', null, `This is Merlark with a made-up channel, ${channel.name}. Watch it connect in about a minute, or jump straight in.`),
-      h('p', { class: 'dim' }, 'Nothing here contacts Google, charges anything or calls an AI model.')),
+    title: 'Make yourself at home.',
+    body: h('div', { class: 'welcome' }, h('div', { class: 'welcome-mark', 'aria-hidden': 'true' }, symbol(44)),
+      h('p', null, 'Meet Lanternfish Histories, our sample channel. Take the quick tour or explore on your own.'),
+      h('p', { class: 'fine' }, DISCLOSURE)),
     actions: [
-      { label: 'Jump straight in', onClick: () => setState({ onboarded: true }) },
-      { label: 'Show me the setup', variant: 'btn-primary', onClick: () => { setState({ onboarded: true }); navigate('#/onboarding'); } },
+      { label: 'I’ll explore', onClick: () => setState({ onboarded: true }) },
+      { label: 'Show me around', variant: 'btn-primary', onClick: () => { setState({ onboarded: true }); navigate('#/onboarding'); } },
     ],
   });
 }
@@ -159,7 +170,7 @@ function welcome() {
 let lastWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   clearTimeout(window.__rz);
-  window.__rz = setTimeout(() => { if (Math.abs(window.innerWidth - lastWidth) > 40) { lastWidth = window.innerWidth; current.key = current.key + ''; render(); } }, 200);
+  window.__rz = setTimeout(() => { if (Math.abs(window.innerWidth - lastWidth) > 40) { lastWidth = window.innerWidth; render(); } }, 200);
 });
 window.addEventListener('hashchange', render);
 document.addEventListener('click', (e) => { if (e.target.closest('[data-close-overlay]')) closeAll(); });

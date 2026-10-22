@@ -16,14 +16,14 @@ const SHORT = {
 };
 
 const kindOf = (v) => (v.template ? 'wave' : v.opening === 'map' ? 'pin' : v.opening === 'archive' ? 'scroll' : 'star');
-const FILL = { pin: '#BFEBD6', scroll: '#DCD2FF', star: '#C6E4FF', wave: '#FFE8A3' };
-const INK = '#1F1C2C';
+const FILL = { pin: '#CFEFDF', scroll: '#DED8F5', star: '#FFD6B4', wave: '#EEEBE3' };
+const INK = '#292D34';
 
 function shape(kind) {
-  const s = { fill: '#fff', stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' };
+  const s = { fill: '#FFFDF8', stroke: INK, 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' };
   if (kind === 'pin') return h('g', { transform: 'translate(124 30)' }, h('path', { ...s, d: 'M0 -20a14 14 0 0 1 14 14c0 11-14 26-14 26s-14-15-14-26a14 14 0 0 1 14-14z' }), h('circle', { cx: 0, cy: -6, r: 5, fill: INK }));
-  if (kind === 'scroll') return h('g', { transform: 'translate(124 30)' }, h('rect', { ...s, x: -16, y: -18, width: 32, height: 40, rx: 6 }), h('path', { d: 'M-8 -6h16M-8 2h16M-8 10h10', stroke: INK, 'stroke-width': 3, 'stroke-linecap': 'round' }));
-  if (kind === 'wave') return h('g', { transform: 'translate(124 30)' }, h('path', { d: 'M-22 -6q5.5-10 11 0t11 0 11 0 11 0M-22 8q5.5-10 11 0t11 0 11 0 11 0', fill: 'none', stroke: INK, 'stroke-width': 4, 'stroke-linecap': 'round' }));
+  if (kind === 'scroll') return h('g', { transform: 'translate(124 30)' }, h('rect', { ...s, x: -16, y: -18, width: 32, height: 40, rx: 6 }), h('path', { d: 'M-8 -6h16M-8 2h16M-8 10h10', stroke: INK, 'stroke-width': 2.5, 'stroke-linecap': 'round' }));
+  if (kind === 'wave') return h('g', { transform: 'translate(124 30)' }, h('path', { d: 'M-22 -6q5.5-10 11 0t11 0 11 0 11 0M-22 8q5.5-10 11 0t11 0 11 0 11 0', fill: 'none', stroke: INK, 'stroke-width': 3, 'stroke-linecap': 'round' }));
   return h('g', { transform: 'translate(124 30)' }, h('path', { ...s, d: 'M0 -20l6 12 13 2-9.5 9 2.5 13L0 10l-12 6 2.5-13-9.5-9 13-2z' }));
 }
 
@@ -39,7 +39,7 @@ function cover(v) {
     l1 = words.slice(0, best).join(' '); l2 = words.slice(best).join(' ');
   }
   return h('svg', { viewBox: '0 0 160 90', preserveAspectRatio: 'xMidYMid slice', 'aria-hidden': 'true' },
-    h('rect', { width: 160, height: 90, fill: short ? '#FFCDB8' : FILL[kind] }),
+    h('rect', { width: 160, height: 90, fill: short ? '#FFFDF8' : FILL[kind] }),
     shape(kind),
     h('text', { x: 12, y: l2 ? 62 : 76, class: 'cover-title', fill: INK }, l1),
     l2 ? h('text', { x: 12, y: 79, class: 'cover-title', fill: INK }, l2) : null);

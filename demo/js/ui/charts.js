@@ -49,7 +49,8 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
   const vmax = niceMax(Math.max(...videos.map((v) => v.views7 || 0), 10000) * 1.08);
   const y = (val) => m.t + ih - (val / vmax) * ih;
   const wrap = h('div', { class: 'chart chart-timeline' });
-  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Upload timeline: first-week views per long video, split at the day you connected into historical estimate and observed by Merlark.' });
+  const svg = h('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Upload timeline: first-week views per long video, split at the day the channel connected into earlier history (a historical estimate) and updates since connection.' });
+  svg.append(h('defs', null, h('pattern', { id: 'hatch', width: 8, height: 8, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, h('rect', { width: 8, height: 8, fill: '#EEEBE3' }), h('line', { x1: 0, y1: 0, x2: 0, y2: 8, stroke: 'rgba(41,45,52,0.10)', 'stroke-width': 3 }))));
   const bx = toMs(CONNECTED_AT) >= t0 ? x(CONNECTED_AT) : null;
 
   if (bx != null) {
@@ -57,13 +58,13 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
       h('rect', { x: m.l, y: m.t, width: bx - m.l, height: ih, class: 'zone-hist' }),
       h('rect', { x: bx, y: m.t, width: W - m.r - bx, height: ih, class: 'zone-obs' }),
       h('line', { x1: bx, x2: bx, y1: m.t - 22, y2: m.t + ih, class: 'boundary' }),
-      h('text', { x: bx, y: m.t - 26, 'text-anchor': bx > W - 90 ? 'end' : bx < m.l + 90 ? 'start' : 'middle', class: 'boundary-label' }, 'You connected here'),
-      bx - m.l > 150 ? h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label hist' }, 'Historical estimate') : null, // only when the zone has room
-      W - m.r - bx > 140 ? h('text', { x: W - m.r - 8, y: m.t + 16, 'text-anchor': 'end', class: 'zone-label obs' }, 'Observed by Merlark') : null,
+      h('text', { x: bx, y: m.t - 26, 'text-anchor': bx > W - 90 ? 'end' : bx < m.l + 90 ? 'start' : 'middle', class: 'boundary-label' }, 'Channel connected'),
+      bx - m.l > 150 ? h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label hist' }, 'Earlier history') : null, // only when the zone has room
+      W - m.r - bx > 140 ? h('text', { x: W - m.r - 8, y: m.t + 16, 'text-anchor': 'end', class: 'zone-label obs' }, 'Since connection') : null,
     );
   } else {
     svg.append(h('rect', { x: m.l, y: m.t, width: iw, height: ih, class: 'zone-obs' }),
-      h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label obs' }, 'Observed by Merlark'));
+      h('text', { x: m.l + 8, y: m.t + 16, class: 'zone-label obs' }, 'Since connection'));
   }
   for (let i = 0; i <= 4; i++) {
     const val = (vmax / 4) * i; const yy = y(val);
@@ -84,7 +85,7 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
     const bl = h('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: 'baseline-line' });
     slideFrom(bl, `${key}:baseline`, 0, yy);
     svg.append(bl,
-      h('text', { x: m.l + 6, y: yy + 14, class: 'axis baseline-label' }, `your usual ${formatInt(baseline)}`));
+      h('text', { x: m.l + 6, y: yy + 14, class: 'axis baseline-label' }, `your usual (median) ${formatInt(baseline)}`));
   }
   const tip = tooltipLayer(wrap);
   videos.forEach((v, i) => {
@@ -95,13 +96,13 @@ export function timelineChart({ videos, range, highlight, baseline, width, heigh
     const g = h('g', {
       class: `dot ${prov} ${hi ? 'hi' : ''} ${highlight && !hi ? 'lo' : ''} ${selectedId === v.id ? 'sel' : ''}`,
       tabindex: 0, role: 'button', style: { '--i': i },
-      'aria-label': `${v.title}, ${formatDate(v.date)}, ${formatInt(v.views7)} views in 7 days, ${prov === 'historical' ? 'historical estimate' : 'observed by Merlark'}`,
+      'aria-label': `${v.title}, ${formatDate(v.date)}, ${formatInt(v.views7)} views in 7 days, ${prov === 'historical' ? 'earlier history, a historical estimate' : 'since connection'}`,
     },
     h('line', { x1: cx, x2: cx, y1: y(0), y2: cy, class: 'stem' }),
     h('circle', { cx, cy, r: hi ? 6 : 4.5 }));
     g.dataset.id = v.id;
     if (slideFrom(g, `${key}:${v.id}`, cx, cy)) g.classList.add('moved');
-    const show = () => tip.show(cx, cy - 14, [v.title, `${formatShort(v.date)} · ${formatInt(v.views7)} views in week one`, prov === 'historical' ? 'Historical estimate' : 'Observed by Merlark']);
+    const show = () => tip.show(cx, cy - 14, [v.title, `${formatShort(v.date)} · ${formatInt(v.views7)} views in week one`, prov === 'historical' ? 'Earlier history · historical estimate' : 'Since connection']);
     g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
     g.addEventListener('pointerleave', tip.hide); g.addEventListener('blur', tip.hide);
     if (onSelect) {

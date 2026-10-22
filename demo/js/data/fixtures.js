@@ -147,10 +147,10 @@ export const patternWatch = {
 // Monitoring log (category 5 — what Merlark recorded while connected). Generated deterministically from the videos above.
 export const extraEvents = [
   { date: '2026-08-24', time: '14:02', type: 'connect', text: 'Channel connected with read-only access (youtube.readonly).' },
-  { date: '2026-08-24', time: '14:09', type: 'backfill', text: 'History rebuilt: 22 earlier videos added as historical estimates.' },
+  { date: '2026-08-24', time: '14:09', type: 'backfill', text: 'Earlier history rebuilt: 22 videos added as historical estimates.' },
   { date: '2026-08-24', time: '14:11', type: 'scope', text: 'Retention view turned on: you granted yt-analytics.readonly.' },
   { date: '2026-10-03', time: '06:00', type: 'error', text: 'A check couldn’t reach YouTube (quota window). It worked on retry at 08:10.' },
-  { date: '2026-10-14', time: '18:30', type: 'finding', text: 'Mid-video recap now has three first-week readings, so it shows up as emerging.' },
+  { date: '2026-10-14', time: '18:30', type: 'finding', text: 'Mid-video recap now has three first-week readings, so it now shows as one to watch.' },
 ];
 
 // Interventions (category 6) and outcomes (category 7). Outcomes are independently observed or creator-reported,

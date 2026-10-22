@@ -54,9 +54,13 @@ export const STATE_RULES = [
   { state: 'slipping', rule: '0.9× your usual or less.' },
   { state: 'neutral', rule: 'Between 0.9× and 1.2× your usual.' },
 ];
+// Display labels for the performance-trend states (§5.9). The ids stay the contract; only the words are friendly.
 export const STATE_LABEL = {
-  working: 'Working', slipping: 'Slipping', neutral: 'Neutral', emerging: 'Emerging', insufficient: 'Not enough data yet',
+  working: 'Looking good', slipping: 'Below your usual', neutral: 'About usual', emerging: 'One to watch', insufficient: 'Too early to tell',
 };
+export const STATE_ICON = { working: 'trend_up', slipping: 'trend_down', neutral: 'level', emerging: 'sprout', insufficient: 'dots' };
+// Evidence strength is a separate question from the state: how well the videos back the pattern up.
+export const QUALITY_LABEL = { Strong: 'Strong support', Moderate: 'Some support', Limited: 'Limited support', Insufficient: 'Not enough support yet' };
 export const QUALITY_HELP = {
   Strong: '6+ matching videos, and at least 80% of them land on the same side of your usual.',
   Moderate: '4+ matching videos, and at least 60% land on the same side of your usual.',

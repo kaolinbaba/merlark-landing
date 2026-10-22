@@ -12,13 +12,13 @@ export const CANON = ['map', 'archive', 'variety', 's1', 's2', 'recap', 's3', 's
 export function grounding(src, statsById, pw) {
   if (src === 'P1') {
     return pw.n ? { kind: 'grounded', label: 'From Pattern watch' }
-      : { kind: 'ungrounded', label: 'Suggestion only · no Pattern watch data in this period' };
+      : { kind: 'ungrounded', label: 'An idea to explore' };
   }
   const s = statsById[src];
-  if (s.state === 'insufficient') return { kind: 'ungrounded', label: 'Suggestion only · not enough data yet' };
-  if (s.state === 'emerging') return { kind: 'grounded', label: 'From your data · emerging, early days' };
-  if (s.state === 'neutral') return { kind: 'grounded', label: 'From your data · no difference found' };
-  return { kind: 'grounded', label: `From your data · ${STATE_LABEL[s.state].toLowerCase()}` };
+  if (s.state === 'insufficient') return { kind: 'ungrounded', label: 'An idea to explore' };
+  if (s.state === 'emerging') return { kind: 'grounded', label: 'From your videos · one to watch' };
+  if (s.state === 'neutral') return { kind: 'grounded', label: 'From your videos · about usual' };
+  return { kind: 'grounded', label: `From your videos · ${STATE_LABEL[s.state].toLowerCase()}` };
 }
 
 export function assemble(script, statsById, pw) {
@@ -27,7 +27,7 @@ export function assemble(script, statsById, pw) {
   for (const id of CANON) {
     if (script.removed.includes(id)) continue;
     const scaffold = scaffoldBlocks.find((b) => b.id === id);
-    if (scaffold) { present.push({ id, section: scaffold.section, label: scaffold.label, text: scaffold.text(topic), source: null, ground: { kind: 'structure', label: 'Structure · not from your data' } }); continue; }
+    if (scaffold) { present.push({ id, section: scaffold.section, label: scaffold.label, text: scaffold.text(topic), source: null, ground: { kind: 'structure', label: 'Structure · not from your videos' } }); continue; }
     const src = Object.keys(SOURCE_BLOCK).find((k) => SOURCE_BLOCK[k] === id);
     if (!script.selected.includes(src)) continue;
     const b = scriptBlocks[id];

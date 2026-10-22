@@ -1,137 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><meta name="theme-color" content="#FBF7F0">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F4ED">
 <title>Merlark brand</title>
-<meta name="description" content="Merlark identity: the lark logo, palette and finding colours, Fredoka and Figtree, control-panel components, voice and motion.">
+<meta name="description" content="The Merlark identity: the wing mark, warm cream with three pastels, Fredoka and Nunito Sans, pressable controls and gentle motion.">
 <link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="preload" href="../assets/fonts/fredoka-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="../assets/fonts/figtree-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/nunito-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>try{if(localStorage.getItem('merlark-motion')==='off')document.documentElement.classList.add('motion-off')}catch(e){}</script>
 <link rel="stylesheet" href="../assets/css/tokens.css"><link rel="stylesheet" href="../assets/css/base.css"><link rel="stylesheet" href="../assets/css/panel-kit.css"><link rel="stylesheet" href="brand.css">
 </head>
 <body>
-<header class="bb-head wrap"><a href="../" class="logo" aria-label="Merlark home" data-logo></a><a class="btn btn-primary btn-sm" href="../demo/">Play with the demo</a></header>
+<header class="bb-head wrap"><a href="../" class="logo" aria-label="Merlark home" data-logo></a><a class="btn btn-primary btn-sm" href="../demo/">Try the demo</a></header>
 <main class="bb wrap">
 <section class="bb-hero">
-  <p class="eyebrow">Brand · 2026</p>
-  <h1 class="display">The friendly control panel.</h1>
-  <p class="lead">Merlark should feel like a well-made desk gadget: calm, colourful, pressable, and obviously useful in five seconds. The joy comes from colour, round shapes and small satisfying clicks — never from effects.</p>
+  <h1 class="display">A clearer place to create.</h1>
+  <p class="lead">Friendly shapes. A little colour. Room to think.</p>
 </section>
 
-<section class="bb-sec">
-  <h2>Logo</h2>
-  <p class="muted">A round lark built from four shapes: a body, a beak, a wedge wing cut out of it, and a coral eye. The eye doubles as the “watching” lamp. Below 24 px use the small cut: a bigger eye and a chunkier beak.</p>
-  <div class="sizes">
-    <figure><img src="../assets/brand/merlark-symbol.svg" width="160" height="160" alt="Merlark symbol at 160 pixels"><figcaption>160</figcaption></figure>
-    <figure><img src="../assets/brand/merlark-symbol.svg" width="64" height="64" alt="Symbol at 64 pixels"><figcaption>64</figcaption></figure>
-    <figure><img src="../assets/brand/merlark-symbol.svg" width="32" height="32" alt="Symbol at 32 pixels"><figcaption>32</figcaption></figure>
-    <figure><img src="../assets/brand/merlark-symbol-small.svg" width="24" height="24" alt="Small symbol at 24 pixels"><figcaption>24 · small cut</figcaption></figure>
-    <figure><img src="../assets/brand/merlark-symbol-small.svg" width="16" height="16" alt="Small symbol at 16 pixels"><figcaption>16 · small cut</figcaption></figure>
-    <figure><img src="../assets/brand/merlark-app-icon.svg" width="96" height="96" alt="App icon"><figcaption>App icon</figcaption></figure>
-    <figure><img src="../assets/brand/favicon.svg" width="32" height="32" alt="Favicon"><figcaption>Favicon</figcaption></figure>
+<section class="bb-sec" aria-labelledby="mark">
+  <div class="bb-intro"><h2 id="mark">Our mark</h2><p>Small, simple and easy to spot.</p></div>
+  <div class="mark-grid">
+    <figure class="mk big"><img src="../assets/brand/merlark-logo.svg" width="360" height="96" alt="Merlark logo: a wing of three rounded feathers beside the lowercase wordmark"><figcaption>Logo</figcaption></figure>
+    <figure class="mk ink"><img src="../assets/brand/merlark-logo-on-ink.svg" width="280" height="88" alt="Merlark logo on charcoal"><figcaption>On charcoal</figcaption></figure>
+    <figure class="mk"><img src="../assets/brand/merlark-symbol.svg" width="96" height="96" alt="The wing symbol"><figcaption>Wing · three feathers</figcaption></figure>
+    <figure class="mk"><span class="sizes"><img src="../assets/brand/merlark-symbol.svg" width="32" height="32" alt="Wing at 32 pixels"><img src="../assets/brand/merlark-symbol-small.svg" width="24" height="24" alt="Small cut at 24 pixels"><img src="../assets/brand/merlark-symbol-small.svg" width="16" height="16" alt="Small cut at 16 pixels"></span><figcaption>32 · 24 · 16 (two-feather cut)</figcaption></figure>
+    <figure class="mk mint"><img src="../assets/brand/merlark-app-icon.svg" width="96" height="96" alt="App icon"><img src="../assets/brand/favicon.svg" width="32" height="32" alt="Favicon"><figcaption>App icon · favicon</figcaption></figure>
+    <figure class="mk"><img src="../assets/brand/merlark-wordmark.svg" width="220" height="44" alt="Wordmark alone"><figcaption>Lowercase “merlark”, Fredoka SemiBold, gently tracked</figcaption></figure>
   </div>
+  <ul class="notes"><li>One colour works everywhere: charcoal on cream, cream on charcoal.</li><li>Below 24px use the two-feather cut.</li><li>Don’t outline, stretch, rotate or re-space the mark.</li></ul>
 </section>
 
-<section class="bb-sec">
-  <h2>Wordmark and lockups</h2>
-  <p class="muted">“merlark”, always lowercase, in Fredoka Bold, drawn as outlines. The wordmark sits beside the symbol at about half its height.</p>
-  <div class="lockups">
-    <div class="lk paper"><img src="../assets/brand/merlark-logo.svg" width="314" height="77" alt="Lockup on paper"><span>On paper</span></div>
-    <div class="lk ink"><img src="../assets/brand/merlark-logo-on-ink.svg" width="314" height="77" alt="Lockup on ink"><span>On ink</span></div>
-    <div class="lk white"><img src="../assets/brand/merlark-logo-compact.svg" width="196" height="48" alt="Compact lockup"><span>Compact · small cut</span></div>
-    <div class="lk butter"><img src="../assets/brand/merlark-wordmark.svg" width="230" height="50" alt="Wordmark alone"><span>Wordmark alone</span></div>
-  </div>
-  <ul class="rules">
-    <li>The eye is coral in colour versions. In one-colour use it stays a hole in the body.</li>
-    <li>Don’t outline, rotate, stretch, add gradients to or re-space the mark.</li>
-    <li>Leave clear space on every side equal to the beak’s length.</li>
-  </ul>
-</section>
-
-<section class="bb-sec">
-  <h2>Palette</h2>
-  <p class="muted">Warm paper, white panels, ink outlines and flat pastels. Coral is the one action colour: primary buttons and the watching lamp. Nothing else is coral.</p>
+<section class="bb-sec" aria-labelledby="colours">
+  <div class="bb-intro"><h2 id="colours">Our colours</h2><p>Warm neutrals give everything room. Pastels help the useful bits stand out.</p></div>
   <ul class="swatches">
-    <li style="--c:#FBF7F0"><b>Paper</b><code>#FBF7F0</code><span>Page ground</span></li>
-    <li style="--c:#FFFFFF"><b>Panel</b><code>#FFFFFF</code><span>Panels, cards</span></li>
-    <li style="--c:#1F1C2C" class="dark"><b>Ink</b><code>#1F1C2C</code><span>Text, outlines</span></li>
-    <li style="--c:#6B6779" class="dark"><b>Muted ink</b><code>#6B6779</code><span>Secondary text</span></li>
-    <li style="--c:#FF6A4D"><b>Coral</b><code>#FF6A4D</code><span>Actions, the lamp</span></li>
-    <li style="--c:#C6E4FF"><b>Sky</b><code>#C6E4FF</code><span>Observed by Merlark</span></li>
-    <li style="--c:#DCD2FF"><b>Lilac</b><code>#DCD2FF</code><span>Historical estimate</span></li>
+    <li class="sw-cream"><b>Cream</b><code>#F7F4ED</code><span>The page. Always the most colour on screen.</span></li>
+    <li class="sw-ink"><b>Charcoal</b><code>#292D34</code><span>Text, outlines, the key bars.</span></li>
+    <li class="sw-mint"><b>Mint</b><code>#CFEFDF</code><span>Primary actions · “Looking good”.</span></li>
+    <li class="sw-apricot"><b>Apricot</b><code>#FFD6B4</code><span>Something to try · “Below your usual”.</span></li>
+    <li class="sw-lilac"><b>Lilac</b><code>#DED8F5</code><span>Previews · “One to watch”.</span></li>
+    <li class="sw-line"><b>Quiet divider</b><code>#DEDCD4</code><span>Lines and resting borders.</span></li>
   </ul>
-  <h3 class="bb-h3">Finding colours — fixed forever</h3>
-  <ul class="swatches states">
-    <li style="--c:#BFEBD6"><b>Working</b><code>Mint #BFEBD6</code></li>
-    <li style="--c:#FFCDB8"><b>Slipping</b><code>Peach #FFCDB8</code></li>
-    <li style="--c:#FFE8A3"><b>Emerging</b><code>Butter #FFE8A3</code></li>
-    <li style="--c:#ECE8E1"><b>Neutral</b><code>Fog #ECE8E1</code></li>
-    <li class="hatched" style="--c:#ECE8E1"><b>Not enough data yet</b><code>Fog + hatching</code></li>
-  </ul>
+  <p class="fine">One principal accent per section. Text stays charcoal on every pastel, and every colour-coded state also carries an icon and a label.</p>
+  <div class="chips states" data-states></div>
 </section>
 
-<section class="bb-sec">
-  <h2>Type</h2>
+<section class="bb-sec" aria-labelledby="type">
+  <div class="bb-intro"><h2 id="type">Our type</h2><p>Rounded headlines bring the personality. Clear interface text keeps things easy.</p></div>
   <div class="type">
-    <div><p class="spec-display">Map-first openings · 1.4×</p><small>Fredoka 600–700 · headlines, buttons, chips, big numbers · SIL Open Font License, self-hosted</small></div>
-    <div><p class="spec-body">Eight long videos open with an animated route map in the first 10 seconds. In week one they averaged 29,450 views; your other long videos usually get 21,200.</p><small>Figtree 400–600 · reading text · SIL Open Font License, self-hosted</small></div>
-    <div><p class="spec-num num">29,450 · 21,200 · 0:00–0:10</p><small>Numbers use tabular figures. Key readouts are big, like a gadget display.</small></div>
+    <div><p class="spec-display">Your next upload,<br>a little clearer.</p><small>Fredoka Medium and SemiBold · headlines, buttons, display labels · SIL Open Font License, self-hosted</small></div>
+    <div><p class="spec-body">8 long videos open with an animated route map in the first 10 seconds. In their first week they averaged 29,450 views. The median for your other 20 long videos is 21,200.</p><small>Nunito Sans · paragraphs, navigation, data and small labels · SIL Open Font License, self-hosted</small></div>
+    <div><p class="spec-num num">29,450 · 21,200 · 0:00–0:10 · 1.4×</p><small>Tabular figures for data. One decimal only for a measured multiplier.</small></div>
   </div>
 </section>
 
-<section class="bb-sec">
-  <h2>Pieces</h2>
+<section class="bb-sec" aria-labelledby="motion">
+  <div class="bb-intro"><h2 id="motion">In motion</h2><p>Quick feedback. Gentle movement. You stay in control.</p></div>
   <div class="kit">
-    <div class="kit-row"><a class="btn btn-primary" href="../demo/">Primary</a><button class="btn btn-ghost" type="button">Secondary</button><button class="btn btn-quiet" type="button">Quiet</button><button class="btn btn-danger" type="button">Careful</button></div>
-    <div class="kit-row"><span class="chip state state-working"><i class="lamp"></i>Working</span><span class="chip state state-slipping"><i class="lamp"></i>Slipping</span><span class="chip state state-emerging"><i class="lamp"></i>Emerging</span><span class="chip state state-neutral"><i class="lamp"></i>Neutral</span><span class="chip state state-insufficient"><i class="lamp"></i>Not enough data yet</span></div>
-    <div class="kit-row"><span class="chip prov-historical">Historical estimate</span><span class="chip prov-observed">Observed by Merlark</span><span class="play-chip num"><svg class="icon" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg>0:00–0:10</span></div>
-    <div class="kit-row"><span class="watch-lamp" aria-hidden="true"></span><span>Watching</span><button class="switch on" type="button" role="switch" aria-checked="true" aria-label="Sample switch" data-demo-switch><i></i></button></div>
-    <div class="kit-tiles">
-      <div class="tile state-working"><div class="tile-top"><span class="chip state state-working"><i class="lamp"></i>Working</span></div><h3>Map-first openings</h3><p class="readout sm"><b class="num">1.4×</b><span>your usual</span></p></div>
-      <div class="panel"><span class="eyebrow">Panel</span><h3 class="kit-h">White on paper, 28px corners</h3><p class="muted">Interactive pieces get a 2px ink outline and a hard 3px drop, so they look pressable.</p></div>
-    </div>
+    <div class="kit-row"><span class="kit-label">Buttons</span>
+      <a class="btn btn-primary" href="../demo/">Primary</a><button class="btn btn-ghost" type="button">Secondary</button><button class="btn btn-ghost is-hover" type="button" tabindex="-1">Hover</button><button class="btn btn-ghost is-pressed" type="button" tabindex="-1">Pressed</button><button class="btn btn-ghost" type="button" disabled>Disabled</button><button class="btn btn-quiet" type="button">Quiet</button></div>
+    <div class="kit-row"><span class="kit-label">Switch and dates</span><button class="switch on" type="button" role="switch" aria-checked="true" aria-label="Sample switch" data-demo-switch><i></i></button><span data-seg></span></div>
+    <div class="kit-row"><span class="kit-label">Icons</span><span class="icons" data-icons></span></div>
   </div>
-</section>
-
-<section class="bb-sec">
-  <h2>Voice</h2>
-  <p class="muted">Talk to one creator. Short sentences, one idea each. Concrete beats abstract. Honest, but friendly about it.</p>
-  <div class="voice">
-    <div class="do"><b>Do</b><ul>
-      <li>“Eight videos, one shared trick.”</li>
-      <li>“That’s 1.4× your usual. It’s a link, not proof of cause.”</li>
-      <li>“Not enough data yet.”</li>
-      <li>“Try a map in the first 10 seconds of your next travel episode.”</li></ul></div>
-    <div class="dont"><b>Don’t</b><ul>
-      <li>“A longitudinal observation across the provenance boundary.”</li>
-      <li>“Your channel is likely to be demonetized.”</li>
-      <li>“Insufficient evidence for interpretation.”</li>
-      <li>“We check your channel every day.”</li></ul></div>
+  <ul class="notes"><li>Buttons sink 2px and their shadow compresses when pressed.</li><li>Selected markers slide into place; switches settle softly.</li><li>No bobbing, flashing, confetti or bouncing. The motion switch and your system’s reduced-motion setting turn it off.</li></ul>
+  <div class="examples">
+    <div class="tile state-working"><div class="tile-top" data-chip="working"></div><h3>Map-first openings</h3><p class="readout sm"><b class="num">1.4×</b><span>your usual</span></p><p class="tile-sub">8 long videos open with an animated route map.</p></div>
+    <div class="ex-panel"><span class="ex-label">The numbers</span><div data-pair></div></div>
+    <div class="ex-try"><span class="ex-label">Something to try</span><p>Try a map in the first 10 seconds of your next travel episode.</p><button class="btn btn-ghost btn-sm" type="button">Start an experiment</button></div>
   </div>
-  <p class="fine">Swaps: observation → “What we saw” · interpretation → “What it might mean” · baseline → “your usual” · intervention → “experiment” · outcome → “how it went”. Wherever history is shown, the backfill label stays word for word: “Historical estimate based on currently accessible content. Deleted, private, or unavailable videos may not be represented.”</p>
-</section>
-
-<section class="bb-sec">
-  <h2>Motion</h2>
-  <ul class="rules">
-    <li><b>Micro only.</b> Buttons press down 2px. Switches snap. Panels pop in with a small spring, 300 ms or less.</li>
-    <li><b>Numbers count up once</b> when they first scroll into view.</li>
-    <li><b>The lamp blinks slowly</b> while Merlark is watching.</li>
-    <li><b>Never:</b> scroll-jacking, canvas effects, glows, particles or gradients.</li>
-    <li><b>Respect stillness.</b> Reduced-motion settings and the site’s motion switch turn animation off.</li>
-  </ul>
 </section>
 
 <section class="bb-sec"><h2>Downloads</h2><ul class="files">
-<li><a href="../assets/brand/merlark-symbol.svg" download>merlark-symbol.svg</a></li><li><a href="../assets/brand/merlark-symbol-small.svg" download>merlark-symbol-small.svg</a></li><li><a href="../assets/brand/merlark-wordmark.svg" download>merlark-wordmark.svg</a></li><li><a href="../assets/brand/merlark-logo.svg" download>merlark-logo.svg</a></li><li><a href="../assets/brand/merlark-logo-on-ink.svg" download>merlark-logo-on-ink.svg</a></li><li><a href="../assets/brand/merlark-logo-compact.svg" download>merlark-logo-compact.svg</a></li><li><a href="../assets/brand/merlark-app-icon.svg" download>merlark-app-icon.svg</a></li><li><a href="../assets/brand/favicon.svg" download>favicon.svg</a></li><li><a href="../assets/brand/icon-512.png" download>icon-512.png</a></li><li><a href="../assets/brand/apple-touch-icon.png" download>apple-touch-icon.png</a></li><li><a href="../assets/brand/og-image.png" download>og-image.png</a></li>
+<li><a href="../assets/brand/merlark-logo.svg" download>merlark-logo.svg</a></li><li><a href="../assets/brand/merlark-logo-on-ink.svg" download>merlark-logo-on-ink.svg</a></li><li><a href="../assets/brand/merlark-logo-compact.svg" download>merlark-logo-compact.svg</a></li><li><a href="../assets/brand/merlark-symbol.svg" download>merlark-symbol.svg</a></li><li><a href="../assets/brand/merlark-symbol-small.svg" download>merlark-symbol-small.svg</a></li><li><a href="../assets/brand/merlark-wordmark.svg" download>merlark-wordmark.svg</a></li><li><a href="../assets/brand/merlark-app-icon.svg" download>merlark-app-icon.svg</a></li><li><a href="../assets/brand/favicon.svg" download>favicon.svg</a></li><li><a href="../assets/brand/icon-512.png" download>icon-512.png</a></li><li><a href="../assets/brand/og-image.png" download>og-image.png</a></li>
 </ul></section>
 </main>
-<footer class="bb-foot wrap">© 2026 Merlark · Original identity, not affiliated with YouTube or Google. Fonts: Fredoka and Figtree, SIL Open Font License.</footer>
+<footer class="bb-foot wrap">© 2026 Merlark · Merlark is an independent project and isn’t affiliated with YouTube or Google. Fonts: Fredoka and Nunito Sans, SIL Open Font License.</footer>
 <script type="module">
-import { symbol, wordmark } from '../demo/js/ui/dom.js';
-document.querySelector('[data-logo]').append(symbol(30), wordmark(22));
+import { symbol, wordmark, icon, segmented } from '../demo/js/ui/dom.js';
+import { stateChip, barPair } from '../demo/js/ui/components.js';
+import { initMotionPreference } from '../demo/js/ui/motion.js';
+initMotionPreference();
+document.querySelector('[data-logo]').append(symbol(30), wordmark(21));
 const s = document.querySelector('[data-demo-switch]');
-s.addEventListener('click', () => { const on = s.getAttribute('aria-checked') !== 'true'; s.setAttribute('aria-checked', String(on)); s.classList.toggle('on', on); s.previousElementSibling.textContent = on ? 'Watching' : 'Paused'; s.previousElementSibling.previousElementSibling.classList.toggle('off', !on); });
+s.addEventListener('click', () => { const on = s.getAttribute('aria-checked') !== 'true'; s.setAttribute('aria-checked', String(on)); s.classList.toggle('on', on); });
+document.querySelector('[data-seg]').append(segmented([['all', 'All history'], ['6m', '6 months'], ['90d', '90 days']], 'all', () => {}, { label: 'Sample dates' }));
+document.querySelector('[data-icons]').append(...['overview', 'patterns', 'history', 'videos', 'compare', 'recap', 'experiments', 'drafts', 'settings', 'bulb', 'calendar', 'eye', 'link', 'sparkle', 'trend_up', 'trend_down', 'level', 'sprout'].map((n) => icon(n, 24)));
+document.querySelector('[data-states]').append(...['working', 'slipping', 'neutral', 'emerging', 'insufficient'].map(stateChip));
+document.querySelector('[data-chip]').append(stateChip('working'));
+document.querySelector('[data-pair]').append(barPair({ group: 29450, groupCalc: 'Average of 8 videos with the pattern', base: 21200, baseCalc: 'Median of 20 other long videos' }));
 </script>
 </body>
 </html>
